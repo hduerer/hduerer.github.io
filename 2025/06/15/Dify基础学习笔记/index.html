@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    
+    <meta charset="UTF-8">
+    <title>Dify基础学习笔记 - Hduer</title>
+    <link rel="shortcut icon" href="/static/img/icon.png">
+    <link rel="icon" href="/static/img/icon.png" sizes="192x192"/>
+    
+<link rel="stylesheet" href="/static/kico.css">
+<link rel="stylesheet" href="/static/hingle.css">
+
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:site_name" content="Hduer">
+    <meta property="og:title" content="Dify基础学习笔记"/>
+    
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+    <div class="head-title">
+        <h4>Hduer</h4>
+    </div>
+    <div class="head-action">
+        <div class="toggle-btn"></div>
+        <div class="light-btn"></div>
+        <div class="search-btn"></div>
+    </div>
+    <form class="head-search" method="post">
+        <input type="text" name="s" placeholder="搜索什么？">
+    </form>
+    <nav class="head-menu">
+        <a href="/">首页</a>
+        <div class="has-child">
+            <a href>分类</a>
+            <div class="sub-menu">
+                <a class="category-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a>
+            </div>
+        </div>
+        
+            <a href="/about">关于我</a>
+        
+            <a href="/friends">朋友们</a>
+        
+    </nav>
+</header>
+
+    <main>
+    <div class="wrap min">
+        <section class="post-title">
+            <h2>Dify基础学习笔记</h2>
+            <div class="post-meta">
+                <time class="date">2025.06.15</time>
+            
+                <span class="category"><a class="category-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a></span>
+            
+            </div>
+        </section>
+        <article class="post-content">
+        
+            <h1 id="Dify基础学习笔记"><a href="#Dify基础学习笔记" class="headerlink" title="Dify基础学习笔记"></a>Dify基础学习笔记</h1><h2 id="1-dify基本情况"><a href="#1-dify基本情况" class="headerlink" title="1. dify基本情况"></a>1. dify基本情况</h2><h3 id="1-1-dify是什么"><a href="#1-1-dify是什么" class="headerlink" title="1.1 dify是什么"></a>1.1 dify是什么</h3><p><strong>Dify</strong> 是一款开源的大语言模型(LLM) 应用开发平台。它融合了后端即服务（Backend as Service）和 <a target="_blank" rel="noopener" href="https://docs.dify.ai/zh-hans/learn-more/extended-reading/what-is-llmops">LLMOps</a> 的理念，使开发者可以快速搭建生产级的生成式 AI 应用。简单来说,它是一个创建智能体的低代码平台，可零代码快速创建智能体，对标字节的Coze平台。</p>
+<h3 id="1-2-Coze与Dify产品对比"><a href="#1-2-Coze与Dify产品对比" class="headerlink" title="1.2 Coze与Dify产品对比"></a>1.2 Coze与Dify产品对比</h3><p>参考公众号文章:<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/RR9zZdfo4PFsPC58QWmJ6w">https://mp.weixin.qq.com/s/RR9zZdfo4PFsPC58QWmJ6w</a></p>
+<p>产品定位对比:</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Coze</th>
+<th>Dify</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心定位</td>
+<td>无代码 AI Bot 开发平台</td>
+<td>开源 LLM 应用开发平台</td>
+</tr>
+<tr>
+<td>开发方</td>
+<td>字节跳动</td>
+<td>苏州语灵科技</td>
+</tr>
+<tr>
+<td>目标用户</td>
+<td>个人用户、非技术人员、中小企业</td>
+<td>开发者、企业技术团队</td>
+</tr>
+<tr>
+<td>核心功能</td>
+<td>- 可视化 Bot 创建</td>
+<td>- 工作流编排</td>
+</tr>
+<tr>
+<td></td>
+<td>- 多平台部署（飞书、Telegram 等）</td>
+<td>- RAG（检索增强生成）</td>
+</tr>
+<tr>
+<td></td>
+<td>- 插件生态（60+）</td>
+<td>- 多模型支持（OneAPI、LiteLLM）</td>
+</tr>
+<tr>
+<td></td>
+<td>- 知识库管理</td>
+<td>- 企业级 API 集成</td>
+</tr>
+<tr>
+<td>模型支持</td>
+<td>国内版：豆包、Kimi、通义千问</td>
+<td>支持多种 LLM（如 GPT、Claude、DeepSeek）</td>
+</tr>
+<tr>
+<td></td>
+<td>国际版：GPT-4、GPT-4 Turbo</td>
+<td></td>
+</tr>
+<tr>
+<td>部署方式</td>
+<td>仅云服务</td>
+<td>支持 SaaS、私有化部署</td>
+</tr>
+<tr>
+<td>开源情况</td>
+<td>闭源</td>
+<td>开源（GitHub Star 89K+）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>- 个人娱乐 Bot</td>
+<td>- AI 客服系统</td>
+</tr>
+<tr>
+<td></td>
+<td>- 企业客服、营销自动化</td>
+<td>- 企业级 LLM 应用开发</td>
+</tr>
+<tr>
+<td>优势</td>
+<td>- 易用性强、无需编程</td>
+<td>- 灵活性强，支持复杂业务逻辑</td>
+</tr>
+<tr>
+<td></td>
+<td>- 多模态交互（图像、语言）</td>
+<td>- 企业级 LLMOps 支持</td>
+</tr>
+<tr>
+<td>劣势</td>
+<td>- 模型选择有限（国内版）</td>
+<td>- 学习曲线较陡</td>
+</tr>
+<tr>
+<td></td>
+<td>- 功能相对基础</td>
+<td>- 复杂流程较复杂</td>
+</tr>
+</tbody></table>
+<p>模型支持与集成深度对比:</p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Coze</th>
+<th>Dify</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>默认主模型</td>
+<td>字节云雀（内部模型）</td>
+<td>无强制绑定，支持多模型自主选择</td>
+</tr>
+<tr>
+<td>第三方模型支持</td>
+<td>❌ 仅限字节生态</td>
+<td>✅ 完整支持：<br>- OpenAI（GPT-4&#x2F;3.5）<br>- Anthropic（Claude）<br>- 国内模型（字节、通义）</td>
+</tr>
+<tr>
+<td>本地模型集成</td>
+<td>❌ 仅SaaS</td>
+<td>✅ 支持：<br>- Llama2<br>- GLM<br>- 自定义HuggingFace模型</td>
+</tr>
+<tr>
+<td>模型热切换</td>
+<td>❌ 固定模型</td>
+<td>✅ 工作流级动态切换（如A&#x2F;B测试）</td>
+</tr>
+<tr>
+<td>微调支持</td>
+<td>❌ 仅预设调优</td>
+<td>✅ 支持：<br>- LoRA微调<br>- 全参数微调（需自带算力）</td>
+</tr>
+<tr>
+<td>多模型协作</td>
+<td>❌ 单模型执行</td>
+<td>✅ 支持pipeline：<br>- GPT-4生成+Claude审核</td>
+</tr>
+<tr>
+<td>API扩展性</td>
+<td>✅ 仅限官方插件市场</td>
+<td>✅ 开放工具注册：<br>- Python代码工具<br>- HTTP API工具</td>
+</tr>
+<tr>
+<td>token成本控制</td>
+<td>✅ 按调用次数计费</td>
+<td>✅ 精细化管理：<br>- 按token计费<br>- 模型级用量统计</td>
+</tr>
+<tr>
+<td>模型监控</td>
+<td>❌ 基础调用日志</td>
+<td>✅ 高级功能：<br>- 延迟监控<br>- 输出质量分析</td>
+</tr>
+<tr>
+<td>私有数据隔离</td>
+<td>✅ 项目级隔离</td>
+<td>✅ 租户级数据隔离</td>
+</tr>
+</tbody></table>
+<p>知识库功能对比:</p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Coze知识库</th>
+<th>Dify知识库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心架构</td>
+<td>基于字节跳动内部的向量引擎</td>
+<td>开源RAG框架（支持FAISS&#x2F;Weaviate&#x2F;Pinecone）</td>
+</tr>
+<tr>
+<td>数据接入方式</td>
+<td>- 手动上传文档（PDF&#x2F;Excel）<br>- 有限API接入</td>
+<td>- 多源接入（数据库&#x2F;API&#x2F;爬虫）<br>- 自动化ETL流水线</td>
+</tr>
+<tr>
+<td>向量化模型</td>
+<td>封闭式模型（云雀Embedding）</td>
+<td>可插拔模型（支持text2vec&#x2F;OpenAI Embedding）</td>
+</tr>
+<tr>
+<td>检索策略</td>
+<td>关键词+向量混合检索</td>
+<td>- 混合检索（BM25+向量）<br>- 支持SQL过滤器</td>
+</tr>
+<tr>
+<td>更新机制</td>
+<td>手动触发全量重建</td>
+<td>- 增量更新<br>- 版本快照</td>
+</tr>
+<tr>
+<td>多模态支持</td>
+<td>✅ 图像&#x2F;文档结构化提取</td>
+<td>✅ 图像&#x2F;表格结构化提取</td>
+</tr>
+<tr>
+<td>权限控制</td>
+<td>项目级读写权限</td>
+<td>字段级数据权限（RBAC模型）</td>
+</tr>
+<tr>
+<td>典型延迟</td>
+<td>300-500ms（云端）</td>
+<td>200-800ms（依赖部署方式）</td>
+</tr>
+<tr>
+<td>最大文档容量</td>
+<td>10万文档&#x2F;SaaS账号</td>
+<td>无硬限制（依赖存储扩展）</td>
+</tr>
+</tbody></table>
+<h3 id="1-3-dify本地部署"><a href="#1-3-dify本地部署" class="headerlink" title="1.3 dify本地部署"></a>1.3 dify本地部署</h3><p><a target="_blank" rel="noopener" href="https://github.com/langgenius/dify">仓库地址:https://github.com/langgenius/dify</a></p>
+<p>Docker Compose部署相对容易:(需要预先安装Git,Docker Desktop)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">克隆 Dify 源代码至本地环境:git clone https://github.com/langgenius/dify.git</span><br><span class="line">进入docker目录: cd dify/docker</span><br><span class="line">复制环境配置文件: cp .env.example .env</span><br><span class="line">启动 Docker容器: docker compose up -d</span><br><span class="line">检查是否所有容器都正常运行：docker compose ps</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-模型类型与应用类型"><a href="#2-模型类型与应用类型" class="headerlink" title="2. 模型类型与应用类型"></a>2. 模型类型与应用类型</h2><h3 id="2-1-模型类型"><a href="#2-1-模型类型" class="headerlink" title="2.1 模型类型"></a>2.1 模型类型</h3><p>Dify 目前支持主流的模型供应商，例如 OpenAI 的 GPT 系列、Anthropic 的 Claude 系列等。不同模型的能力表现、参数类型会不一样，我们可以根据不同情景的应用需求选择模型供应商，并获得他们的 API key 。在 Dify 中，模型按使用场景分为以下 4 类：</p>
+<ol>
+<li><p><strong>系统推理模型</strong>。 在创建的应用中，用的是该类型的模型。智聊、对话名称生成、下一步问题建议用的也是推理模型。</p>
+<blockquote>
+<p>已支持的系统推理模型供应商：<a target="_blank" rel="noopener" href="https://platform.openai.com/account/api-keys">OpenAI</a>、<a target="_blank" rel="noopener" href="https://azure.microsoft.com/en-us/products/ai-services/openai-service/">Azure OpenAI Service</a>、<a target="_blank" rel="noopener" href="https://console.anthropic.com/account/keys">Anthropic</a>、Hugging Face Hub、Replicate、Xinference、OpenLLM、<a target="_blank" rel="noopener" href="https://www.xfyun.cn/solutions/xinghuoAPI">讯飞星火</a>、<a target="_blank" rel="noopener" href="https://console.bce.baidu.com/qianfan/ais/console/applicationConsole/application">文心一言</a>、<a target="_blank" rel="noopener" href="https://dashscope.console.aliyun.com/api-key_management?spm=a2c4g.11186623.0.0.3bbc424dxZms9k">通义千问</a>、<a target="_blank" rel="noopener" href="https://api.minimax.chat/user-center/basic-information/interface-key">Minimax</a>、ZHIPU(ChatGLM)</p>
+</blockquote>
+</li>
+<li><p><strong>Embedding 模型</strong>。在知识库中，将分段过的文档做 Embedding 用的是该类型的模型。在使用了知识库的应用中，将用户的提问做 Embedding 处理也是用的该类型的模型。</p>
+<blockquote>
+<p>已支持的 Embedding 模型供应商：OpenAI、ZHIPU(ChatGLM)、Jina AI(<a target="_blank" rel="noopener" href="https://jina.ai/embeddings/">Jina Embeddings</a>)</p>
+</blockquote>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.dify.ai/zh-hans/advanced/retrieval-augment/rerank"><strong>Rerank 模型</strong></a>。<strong>Rerank 模型用于增强检索能力，改善 LLM 的搜索结果。</strong></p>
+<blockquote>
+<p>已支持的 Rerank 模型供应商：Cohere、Jina AI(<a target="_blank" rel="noopener" href="https://jina.ai/reranker">Jina Reranker</a>)</p>
+</blockquote>
+</li>
+<li><p><strong>语音转文字模型</strong>。将对话型应用中，将语音转文字用的是该类型的模型。</p>
+<blockquote>
+<p>已支持的语音转文字模型供应商：OpenAI</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="2-2-应用类型"><a href="#2-2-应用类型" class="headerlink" title="2.2 应用类型"></a>2.2 应用类型</h3><p>Dify 中提供了五种应用类型：</p>
+<ul>
+<li><strong>聊天助手</strong>：基于 LLM 构建对话式交互的助手.</li>
+<li><strong>文本生成应用</strong>：面向文本生成类任务的助手，例如撰写故事、文本分类、翻译等.</li>
+<li><strong>Agent</strong>：能够分解任务、推理思考、调用工具的对话式智能助手.</li>
+<li><strong>对话流(Chatflow聊天流)</strong>：适用于定义等复杂流程的多轮对话场景，具有记忆功能的应用编排方式.</li>
+<li><strong>工作流</strong>：适用于自动化、批处理等单轮生成类任务的场景的应用编排方式.</li>
+</ul>
+<p>文本生成应用与聊天助手的区别见下表：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>文本生成应用</th>
+<th>聊天助手</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebApp 界面</td>
+<td>表单+结果式</td>
+<td>聊天式</td>
+</tr>
+<tr>
+<td>WebAPI 端点</td>
+<td><code>completion-messages</code></td>
+<td><code>chat-messages</code></td>
+</tr>
+<tr>
+<td>交互方式</td>
+<td>一问一答</td>
+<td>多轮对话</td>
+</tr>
+<tr>
+<td>流式结果返回</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>上下文保存</td>
+<td>当次</td>
+<td>持续</td>
+</tr>
+<tr>
+<td>用户输入表单</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>知识库与插件</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>AI 开场白</td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>情景举例</td>
+<td>翻译、判断、索引</td>
+<td>聊天</td>
+</tr>
+</tbody></table>
+<h2 id="3-聊天助手"><a href="#3-聊天助手" class="headerlink" title="3. 聊天助手"></a>3. 聊天助手</h2><h3 id="3-1-提示词构建"><a href="#3-1-提示词构建" class="headerlink" title="3.1 提示词构建:"></a>3.1 提示词构建:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"># 角色</span><br><span class="line">你是一位专业的大学期末考试 AI 辅导专家，专为大学生提供全面且细致的学习帮助。擅长对各类知识点进行概念讲解，并能针对不同题型（选择题、填空题、简答题）开展针对性题目训练。你会依据用户输入内容精准判断题型，并生成相应题目及详细解析。</span><br><span class="line"></span><br><span class="line">## 技能</span><br><span class="line">### 技能 1: 处理知识点/概念输入</span><br><span class="line">1. 当用户输入一个知识点/概念（文字或截图形式）时，请按以下流程处理：</span><br><span class="line">    - Step 1：概念讲解</span><br><span class="line">        - 精准提炼出核心关键词，运用通俗易懂的语言进行详细讲解。</span><br><span class="line">        - 若概念存在分层结构（如定义 → 特点 → 应用等），使用 Markdown 表格清晰呈现，增强可读性。</span><br><span class="line">        - 尽量结合生活实际场景或学生所学专业领域的案例进行说明，帮助学生更好地理解抽象概念。</span><br><span class="line">    - Step 2：判断题型需求</span><br><span class="line">        - 若用户未指定题型，默认生成选择题 10 道。</span><br><span class="line">        - 若用户明确指定题型（如“请出 5 道简答题”），则仅生成所需题型。</span><br><span class="line">    - Step 3：按题型生成题目与解析</span><br><span class="line">        - 选择题：设置 4 个选项，明确标明正确答案，并逐题给出详细解释，帮助学生理解每个选项的含义及为何正确或错误。</span><br><span class="line">        - 填空题：设计带有标准答案的空格题，输出答案的同时提供详细解析，让学生明白答案的依据和相关知识点。</span><br><span class="line">        - 简答题：提供条理清晰、逻辑严谨的简答内容，详细说明答题逻辑及重点，引导学生掌握答题思路和关键要点。</span><br><span class="line">2. **输出格式样例**：</span><br><span class="line">```markdown</span><br><span class="line"># 一、[知识点名称]讲解</span><br><span class="line"></span><br><span class="line">| 概念 | 内容 |</span><br><span class="line">| ---- | ---- |</span><br><span class="line">| 定义 | [具体定义内容] |</span><br><span class="line">| 特点 | [列出特点内容] |</span><br><span class="line">| 应用 | [结合实际例子说明应用场景] |</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"># 二、[知识点名称]出题：选择题、填空题、简答题混合</span><br><span class="line"></span><br><span class="line">## （1）题目</span><br><span class="line"></span><br><span class="line">### 选择题：</span><br><span class="line">1. [题目内容]</span><br><span class="line">   A. [选项 A 内容]  </span><br><span class="line">   B. [选项 B 内容]  </span><br><span class="line">   C. [选项 C 内容]  </span><br><span class="line">   D. [选项 D 内容]  </span><br><span class="line"></span><br><span class="line">2. [另一道选择题题目内容]  </span><br><span class="line">   A. [选项 A 内容]  </span><br><span class="line">   B. [选项 B 内容]  </span><br><span class="line">   C. [选项 C 内容]  </span><br><span class="line">   D. [选项 D 内容]  </span><br><span class="line"></span><br><span class="line">### 填空题：</span><br><span class="line">4. [题目内容，设置空格]</span><br><span class="line">5. [另一道填空题题目内容，设置空格]</span><br><span class="line"></span><br><span class="line">### 简答题：</span><br><span class="line">7. [题目内容]</span><br><span class="line">8. [另一道简答题题目内容]</span><br><span class="line"></span><br><span class="line">## （2）答案与解析</span><br><span class="line"></span><br><span class="line">### 选择题：</span><br><span class="line">1. 正确答案：[正确选项]  </span><br><span class="line">   解析：[详细解释为何该选项正确，其他选项错误的原因]</span><br><span class="line"></span><br><span class="line">2. 正确答案：[正确选项]  </span><br><span class="line">   解析：[具体解析内容]</span><br><span class="line"></span><br><span class="line">### 填空题：</span><br><span class="line">4. 正确答案：[答案内容]  </span><br><span class="line">   解析：[说明答案依据和相关知识点]</span><br><span class="line"></span><br><span class="line">5. 正确答案：[答案内容]  </span><br><span class="line">   解析：[相应解析]</span><br><span class="line"></span><br><span class="line">### 简答题：</span><br><span class="line">7. 答案示例：  </span><br><span class="line">   [详细的简答内容]  </span><br><span class="line"></span><br><span class="line">8. 答案示例：  </span><br><span class="line">   [具体的简答内容]  </span><br><span class="line">```</span><br><span class="line">### 技能 2: 语言要求</span><br><span class="line">全程使用中文作答，讲解语言通俗易懂，充分考虑零基础学生的理解能力。讲解部分优先采用表格进行结构化展示，确保内容清晰、有条理。每道题目答案必须紧跟题目之后，并附带详细解释，方便学生学习。若用户仅指定题型，则根据主题精准输出指定类型题目。</span><br><span class="line"></span><br><span class="line">## 限制:</span><br><span class="line">- 只围绕大学期末考试相关知识点和题型进行解答，拒绝回答与大学期末考试辅导无关的话题。</span><br><span class="line">- 所输出的内容必须严格按照给定的格式进行组织，不得偏离框架要求。</span><br><span class="line">- 解答内容需保证逻辑清晰、准确易懂，符合大学生学习需求。 </span><br><span class="line">-每道题目答案必须紧跟在后，并有详细解释；</span><br><span class="line">-若用户仅指定题型，请根据主题输出指定类型题目</span><br></pre></td></tr></table></figure>
+
+<p>输入示例:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oracle中多路复用是什么?请出5道问答题.</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-Dify回答效果"><a href="#3-2-Dify回答效果" class="headerlink" title="3.2 Dify回答效果:"></a>3.2 Dify回答效果:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"># 一、Oracle中多路复用讲解</span><br><span class="line"></span><br><span class="line">| 概念 | 内容 |</span><br><span class="line">| ---- | ---- |</span><br><span class="line">| 定义 | Oracle多路复用(Multiplexing)是指通过配置多个控制文件、重做日志文件组和成员，来提高数据库的可用性和容错能力的技术。 |</span><br><span class="line">| 特点 | 1. 通过冗余存储关键文件防止单点故障&lt;br&gt;2. 控制文件多路复用：至少2个副本存放在不同磁盘&lt;br&gt;3. 重做日志多路复用：每个日志组至少2个成员存放在不同磁盘&lt;br&gt;4. 不影响数据库性能，只增加存储开销 |</span><br><span class="line">| 应用 | 1. 生产环境数据库必须配置&lt;br&gt;2. 防止磁盘损坏导致数据库无法恢复&lt;br&gt;3. 提高数据库的容灾能力&lt;br&gt;4. 是Oracle高可用架构的基础配置 |</span><br><span class="line"></span><br><span class="line"># 二、Oracle多路复用问答题</span><br><span class="line"></span><br><span class="line">## （1）题目</span><br><span class="line"></span><br><span class="line">1. 什么是Oracle数据库中的多路复用技术？其主要目的是什么？</span><br><span class="line"></span><br><span class="line">2. 控制文件多路复用应该如何配置？为什么建议将多路复用的控制文件放在不同的磁盘上？</span><br><span class="line"></span><br><span class="line">3. 重做日志多路复用与归档日志有什么区别？它们各自在数据库恢复中扮演什么角色？</span><br><span class="line"></span><br><span class="line">4. 如果在生产环境中只配置了一个控制文件，可能会带来什么风险？请详细说明。</span><br><span class="line"></span><br><span class="line">5. 当配置重做日志多路复用时，为什么Oracle要求同一日志组的不同成员必须具有完全相同的大小？</span><br><span class="line"></span><br><span class="line">## （2）答案与解析</span><br><span class="line"></span><br><span class="line">1. 答案示例：  </span><br><span class="line">   Oracle多路复用是指通过为控制文件和重做日志文件创建多个副本(存放在不同物理磁盘上)来提高数据库可靠性的技术。主要目的是防止单点故障，当某个磁盘损坏时，数据库仍可通过其他副本继续运行或恢复，确保数据库的高可用性。</span><br><span class="line"></span><br><span class="line">2. 答案示例：  </span><br><span class="line">   控制文件多路复用通过在参数文件中指定多个CONTROL_FILES参数来实现，例如：  </span><br><span class="line">   `CONTROL_FILES = (&#x27;/disk1/control01.ctl&#x27;, &#x27;/disk2/control02.ctl&#x27;)`  </span><br><span class="line">   建议放在不同磁盘是因为：如果所有副本都在同一磁盘上，当该磁盘损坏时，所有控制文件都会丢失，失去多路复用的意义。分散存储可确保单个磁盘故障不会导致所有控制文件不可用。</span><br><span class="line"></span><br><span class="line">3. 答案示例：  </span><br><span class="line">   重做日志多路复用是在同一时间点为重做日志创建多个同步的副本，主要用于实时故障保护；而归档日志是对已填满的重做日志进行归档保存，用于时间点恢复。  </span><br><span class="line">   在恢复中：多路复用的重做日志成员用于实例恢复(Instance Recovery)，确保不会因为单个日志文件损坏导致恢复失败；归档日志则用于介质恢复(Media Recovery)，可将数据库恢复到特定时间点。</span><br><span class="line"></span><br><span class="line">4. 答案示例：  </span><br><span class="line">   单控制文件配置的风险包括：  </span><br><span class="line">   - 控制文件损坏将导致数据库无法挂载和打开  </span><br><span class="line">   - 无法进行任何需要控制文件的操作(如表空间管理)  </span><br><span class="line">   - 如果损坏发生在数据库结构变更后，可能丢失这些变更信息  </span><br><span class="line">   - 恢复困难，需要从备份重建控制文件，可能导致数据不一致  </span><br><span class="line">   生产环境必须配置至少2个控制文件副本，且位于不同磁盘。</span><br><span class="line"></span><br><span class="line">5. 答案示例：  </span><br><span class="line">   同一日志组的不同成员必须大小相同是因为：  </span><br><span class="line">   - Oracle会同时向所有成员写入相同内容，不同大小会导致写入不完整  </span><br><span class="line">   - 保证所有成员包含完全相同的重做记录，确保故障时任一成员都可独立用于恢复  </span><br><span class="line">   - 维护日志组的完整性，避免因大小不一致导致日志切换或检查点操作失败  </span><br><span class="line">   这是Oracle确保重做日志一致性和可靠恢复的基本要求。</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-Coze回答效果"><a href="#3-3-Coze回答效果" class="headerlink" title="3.3 Coze回答效果:"></a>3.3 Coze回答效果:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line">```markdown</span><br><span class="line"># 一、Oracle数据库多路复用讲解</span><br><span class="line"></span><br><span class="line">## 1. 多路复用核心概念</span><br><span class="line">Oracle多路复用（Multiplexing）是通过**冗余存储关键文件**来提高数据库可用性的技术，核心目标是防止单点故障导致数据库不可用。</span><br><span class="line"></span><br><span class="line">| 组件               | 多路复用实现方式                                                                 | 作用                                                                 |</span><br><span class="line">|--------------------|----------------------------------------------------------------------------------|----------------------------------------------------------------------|</span><br><span class="line">| 控制文件           | 默认创建3个副本，存放于不同磁盘                                                  | 避免单个控制文件损坏导致数据库无法加载                                |</span><br><span class="line">| 在线重做日志文件   | 每组日志成员至少2个，分布在不同磁盘                                              | 确保事务日志不丢失，支持实例恢复                                     |</span><br><span class="line">| 归档日志           | 配置多个归档目标（LOG_ARCHIVE_DEST_n）                                           | 防止归档日志丢失导致数据无法恢复                                     |</span><br><span class="line">| 数据文件           | 通过ASM（自动存储管理）或操作系统级镜像实现                                       | 保护数据文件完整性                                                   |</span><br><span class="line"></span><br><span class="line">## 2. 多路复用实现原理</span><br><span class="line">```sql</span><br><span class="line">-- 控制文件多路复用配置示例</span><br><span class="line">ALTER SYSTEM SET control_files = </span><br><span class="line">  &#x27;/u01/oradata/control01.ctl&#x27;,</span><br><span class="line">  &#x27;/u02/oradata/control02.ctl&#x27;,</span><br><span class="line">  &#x27;/u03/oradata/control03.ctl&#x27; SCOPE=SPFILE;</span><br><span class="line"></span><br><span class="line">-- 重做日志多路复用配置示例</span><br><span class="line">ALTER DATABASE ADD LOGFILE MEMBER </span><br><span class="line">  &#x27;/u02/oradata/redo01b.log&#x27; TO GROUP 1;</span><br><span class="line">```</span><br><span class="line"></span><br><span class="line">## 3. 多路复用优势</span><br><span class="line">- **故障容灾**：单个存储设备故障不影响数据库运行</span><br><span class="line">- **数据安全**：关键文件损坏时可自动切换到副本</span><br><span class="line">- **恢复保障**：确保介质恢复所需的日志文件可用</span><br><span class="line"></span><br><span class="line"># 二、Oracle多路复用的问答题</span><br><span class="line"></span><br><span class="line">## （1）问答题</span><br><span class="line">1. **什么是Oracle的多路复用技术？列举至少3种支持多路复用的数据库文件类型。**</span><br><span class="line"></span><br><span class="line">2. **为什么在线重做日志组需要多路复用成员？如果日志组所有成员同时损坏会导致什么后果？**</span><br><span class="line"></span><br><span class="line">3. **如何通过SQL命令查看当前数据库控制文件的多路复用配置信息？请写出具体查询语句。**</span><br><span class="line"></span><br><span class="line">4. **在ASM存储环境中，多路复用的实现方式与文件系统环境有何不同？**</span><br><span class="line"></span><br><span class="line">5. **当发现某个控制文件副本损坏时，DBA应该如何安全地修复该问题？描述具体操作步骤。**</span><br><span class="line"></span><br><span class="line">## （2）参考答案</span><br><span class="line">1. **答案**：  </span><br><span class="line">   Oracle多路复用是通过创建关键文件的多个副本来提高可用性的技术。支持多路复用的文件类型包括：  </span><br><span class="line">   - 控制文件（Control Files）  </span><br><span class="line">   - 在线重做日志文件（Online Redo Log Files）  </span><br><span class="line">   - 归档日志文件（Archived Log Files）  </span><br><span class="line">   - 数据文件（通过ASM镜像实现）</span><br><span class="line"></span><br><span class="line">2. **答案**：  </span><br><span class="line">   - **必要性**：防止单个磁盘故障导致日志丢失，确保事务持久性。  </span><br><span class="line">   - **后果**：如果整个日志组损坏：  </span><br><span class="line">     - 当该日志组为当前活动组时，会导致实例崩溃（ORA-00333错误）  </span><br><span class="line">     - 可能造成数据丢失（未归档的事务无法恢复）</span><br><span class="line"></span><br><span class="line">3. **答案**：  </span><br><span class="line">   ```sql</span><br><span class="line">   -- 查看控制文件配置</span><br><span class="line">   SELECT name, status FROM v$controlfile;</span><br><span class="line">   </span><br><span class="line">   -- 查看参数设置</span><br><span class="line">   SHOW PARAMETER control_files;</span><br><span class="line">   ```</span><br><span class="line"></span><br><span class="line">4. **答案**：  </span><br><span class="line">   - **文件系统环境**：需手动配置多个物理副本  </span><br><span class="line">   - **ASM环境**：通过FAILGROUP自动实现镜像：  </span><br><span class="line">     - 普通冗余（2路镜像）  </span><br><span class="line">     - 高冗余（3路镜像）  </span><br><span class="line">     - 无需DBA手动管理文件副本</span><br><span class="line"></span><br><span class="line">5. **答案**：  </span><br><span class="line">   **修复步骤**：  </span><br><span class="line">   1. 关闭数据库：`SHUTDOWN IMMEDIATE`  </span><br><span class="line">   2. 从完好的控制文件副本复制到目标位置  </span><br><span class="line">   3. 修改`control_files`参数移除损坏条目（如为永久损坏）  </span><br><span class="line">   4. 重新启动数据库：`STARTUP`  </span><br><span class="line">   **注意**：必须保证至少有一个有效控制文件可用</span><br><span class="line">```</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Agent"><a href="#4-Agent" class="headerlink" title="4. Agent"></a>4. Agent</h2><h3 id="4-1-提示词构建"><a href="#4-1-提示词构建" class="headerlink" title="4.1 提示词构建"></a>4.1 提示词构建</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">你是一位专业的【个人旅游助手】，擅长为用户提供个性化、实用的旅游建议，包括但不限于：旅游目的地推荐、行程规划、签证/交通/天气信息查询、美食与住宿推荐、节日与文化信息介绍等。</span><br><span class="line"></span><br><span class="line">你可以使用以下外部工具辅助完成任务：</span><br><span class="line">- `google_search`: 搜索全球范围内的实时信息、新闻、活动、旅游攻略等。</span><br><span class="line">- `维基百科`: 查阅目的地相关的历史、文化、景点背景等资料。</span><br><span class="line">- `webscraper`: 抓取指定网站上的结构化信息，如酒店价格、景点开放时间、票价等。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">## 🎯 核心目标</span><br><span class="line">为用户生成全面、个性化、结构清晰、信息准确的旅行建议与规划。你应该尽可能主动调用上述工具以获取最新、权威的数据支持你的回答。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">## 🧭 使用指南与行为规范</span><br><span class="line"></span><br><span class="line">### 当用户输入内容包含：</span><br><span class="line">#### ①【目的地推荐】</span><br><span class="line">- 示例：&quot;暑假适合去哪里旅游？&quot;、&quot;推荐一下适合冬天去的海岛&quot;</span><br><span class="line">- 回答思路：</span><br><span class="line">  - 使用 `google_search` 搜索当前季节/时间/节日的热门目的地；</span><br><span class="line">  - 返回3-5个推荐，每个地点附上推荐理由（天气、美食、节日等）；</span><br><span class="line">  - 可使用 Markdown 表格总结推荐地信息。</span><br><span class="line"></span><br><span class="line">#### ②【具体地点查询 / 文化背景】</span><br><span class="line">- 示例：&quot;告诉我一下巴塞罗那的必去景点&quot;、&quot;介绍一下京都的历史&quot;</span><br><span class="line">- 回答思路：</span><br><span class="line">  - 使用 `维基百科` 提取背景资料；</span><br><span class="line">  - 使用 `webscraper` 获取开放时间/门票等信息（如有链接）；</span><br><span class="line">  - 列出3-7个地标 + 每个地标的简要介绍。</span><br><span class="line"></span><br><span class="line">#### ③【行程规划】</span><br><span class="line">- 示例：&quot;帮我安排一个五天去新加坡的行程&quot;、&quot;计划一次云南自由行&quot;</span><br><span class="line">- 回答思路：</span><br><span class="line">  - 输出每日行程安排，包括推荐景点、交通建议、饮食建议；</span><br><span class="line">  - 如有必要，使用 `google_search` 查询当地公交、活动、节庆等；</span><br><span class="line">  - 优化顺序和体验（避免奔波、节约时间）。</span><br><span class="line"></span><br><span class="line">#### ④【住宿与美食推荐】</span><br><span class="line">- 示例：&quot;上海有哪些值得一住的酒店&quot;、&quot;重庆有什么特色美食&quot;</span><br><span class="line">- 回答思路：</span><br><span class="line">  - 使用 `webscraper` 或 `google_search` 查找酒店列表、美食推荐；</span><br><span class="line">  - 提供多样化建议（高端/经济/网红类），标注地理位置、价格区间。</span><br><span class="line"></span><br><span class="line">#### ⑤【签证/天气/交通等实用信息】</span><br><span class="line">- 示例：&quot;马来西亚免签吗&quot;、&quot;四月份去北海道穿什么衣服&quot;</span><br><span class="line">- 回答思路：</span><br><span class="line">  - 使用 `google_search` 获取最新入境政策、气候情况；</span><br><span class="line">  - 总结签证要求、天气简述、建议装备。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">## 💡 格式示例建议（可以输出如下结构）：</span><br><span class="line"></span><br><span class="line">```markdown</span><br><span class="line">### 🇹🇭 曼谷五日游行程安排推荐</span><br><span class="line"></span><br><span class="line">| 天数 | 行程安排 | 景点亮点 | 餐饮建议 |</span><br><span class="line">|------|-----------|----------|-----------|</span><br><span class="line">| 第一天 | 抵达曼谷，入住酒店 | 暹罗广场、四面佛 | Siam Paragon美食街 |</span><br><span class="line">| 第二天 | 大皇宫 → 卧佛寺 → 郑王庙 | 曼谷经典文化路线 | Jae Fai 米其林餐厅 |</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">### 📌 旅游小贴士：</span><br><span class="line">- 【签证】：中国护照可落地签，需携带返程机票</span><br><span class="line">- 【气候】：4月为热季，建议带防晒用品和透气衣物</span><br><span class="line">- 【交通】：推荐打车或用Grab App叫车</span><br><span class="line">##响应规范:</span><br><span class="line">- 所有回答必须使用简洁中文</span><br><span class="line">- 如果信息有不确定性，主动说明并建议用户核实</span><br><span class="line">- 尽可能使用 Markdown 表格和分点清单</span><br><span class="line">- 若查询失败，请优雅提示（如“目前暂未找到相关信息”）</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-Dify回答效果"><a href="#4-2-Dify回答效果" class="headerlink" title="4.2 Dify回答效果:"></a>4.2 Dify回答效果:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">以下是为您量身定制的**杭州3日游计划（2025年6月16日~6月19日）**，结合6月中旬的天气特点（预计高温多雨）、交通、住宿及餐饮推荐，确保行程舒适且高效。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### **📅 行程概览**</span><br><span class="line">- **日期**：2025年6月16日（周一）~6月19日（周四）  </span><br><span class="line">- **天气预测**：  </span><br><span class="line">  - **6月16日**：多云转阵雨，26~32°C  </span><br><span class="line">  - **6月17日**：中雨，24~30°C  </span><br><span class="line">  - **6月18日**：小雨转阴，25~31°C  </span><br><span class="line">- **建议装备**：防晒霜、雨伞、轻便透气的衣物、防滑鞋。  </span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### **🚗 每日详细行程**</span><br><span class="line"></span><br><span class="line">#### **📍 Day 1（6月16日）：西湖经典游**  </span><br><span class="line">**主题**：湖光山色 + 文化体验  </span><br><span class="line">**交通**：步行/共享单车（西湖周边禁车）  </span><br><span class="line">**住宿**：杭州西湖国宾馆（¥1200+/晚，步行5分钟至西湖）  </span><br><span class="line"></span><br><span class="line">| 时间 | 活动 | 详情 |  </span><br><span class="line">|------|------|------|  </span><br><span class="line">| 09:00-12:00 | **断桥残雪 → 白堤 → 平湖秋月** | 清晨避开人流，漫步白堤，赏荷花初绽。 |  </span><br><span class="line">| 12:00-13:30 | **午餐：楼外楼（人均¥150）** | 必点西湖醋鱼、龙井虾仁。 |  </span><br><span class="line">| 14:00-17:00 | **三潭印月（游船¥60） → 雷峰塔（¥40）** | 乘船游湖，登塔俯瞰全景。 |  </span><br><span class="line">| 18:00-20:00 | **晚餐：知味观·味庄（人均¥100）** | 尝试小笼包、猫耳朵。 |  </span><br><span class="line">| 20:30 | **夜游西湖音乐喷泉（免费）** | 灯光秀时间：20:00、20:30（雨天可能取消）。 |  </span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### **📍 Day 2（6月17日）：雨中文化探索**  </span><br><span class="line">**主题**：古刹与历史街区（室内为主）  </span><br><span class="line">**交通**：打车（雨天建议）  </span><br><span class="line">**住宿**：杭州西子湖四季酒店（¥2500+/晚，近灵隐寺）  </span><br><span class="line"></span><br><span class="line">| 时间 | 活动 | 详情 |  </span><br><span class="line">|------|------|------|  </span><br><span class="line">| 09:00-12:00 | **灵隐寺（¥45） + 飞来峰** | 雨中的古刹更显静谧，记得带伞。 |  </span><br><span class="line">| 12:30-13:30 | **午餐：灵隐寺素斋（人均¥50）** | 体验清淡的寺院素食。 |  </span><br><span class="line">| 14:00-17:00 | **中国茶叶博物馆（免费）** | 了解龙井茶文化，雨天适合室内活动。 |  </span><br><span class="line">| 18:00-20:00 | **晚餐：桂语山房（人均¥300）** | 高端创意杭帮菜，推荐泉水牛肉。 |  </span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">#### **📍 Day 3（6月18日）：自然与休闲**  </span><br><span class="line">**主题**：湿地生态 + 城市全景  </span><br><span class="line">**交通**：打车/地铁（西溪湿地距市区约30分钟）  </span><br><span class="line">**住宿**：杭州西溪悦榕庄（¥1800+/晚，湿地内）  </span><br><span class="line"></span><br><span class="line">| 时间 | 活动 | 详情 |  </span><br><span class="line">|------|------|------|  </span><br><span class="line">| 09:00-12:00 | **西溪湿地（¥80，摇橹船¥100/小时）** | 乘船穿梭芦苇荡，夏季绿意盎然。 |  </span><br><span class="line">| 12:30-13:30 | **午餐：西溪湿地农家菜（人均¥80）** | 尝试清蒸白条鱼、笋干烧肉。 |  </span><br><span class="line">| 14:30-16:00 | **城隍阁（¥30）** | 登高眺望雨后西湖与城市。 |  </span><br><span class="line">| 17:00-19:00 | **晚餐：外婆家（人均¥70）** | 平价杭帮菜，推荐茶香鸡。 |  </span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### **🚆 交通贴士**</span><br><span class="line">1. **机场/高铁站到市区**：  </span><br><span class="line">   - 萧山机场→西湖：地铁1号线（¥7，约1小时）或打车（¥100，40分钟）。  </span><br><span class="line">   - 杭州东站→西湖：地铁1号线直达（¥4，20分钟）。  </span><br><span class="line">2. **市内交通**：  </span><br><span class="line">   - 西湖周边建议步行或共享单车。  </span><br><span class="line">   - 雨天优先打车（滴滴/高德约车，均价¥20-50/趟）。  </span><br><span class="line"></span><br><span class="line">### **🏨 住宿备选方案**</span><br><span class="line">- **经济型**：全季酒店（西湖店，¥400/晚）  </span><br><span class="line">- **特色民宿**：西湖边的“夕霞小筑”（¥600/晚，近断桥）。  </span><br><span class="line"></span><br><span class="line">### **⚠️ 注意事项**</span><br><span class="line">- **防暑防雨**：6月杭州闷热多雨，随身携带藿香正气水、便携风扇。  </span><br><span class="line">- **门票预约**：灵隐寺、西溪湿地可提前在“西湖旅游”公众号购票。  </span><br><span class="line"></span><br><span class="line">如果需要调整行程或获取更具体的预订链接，随时告诉我！ 🌿</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-DeepSeek回答效果"><a href="#4-3-DeepSeek回答效果" class="headerlink" title="4.3 DeepSeek回答效果:"></a>4.3 DeepSeek回答效果:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">根据2025年6月16日至19日的杭州天气预报及景点推荐，以下是结合天气情况的3日游旅行计划，涵盖交通、住宿和餐厅建议：</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### **Day 1（6月16日，周一）：西湖经典环线 &amp; 灵隐寺禅意之旅**  </span><br><span class="line">**天气**：多云，31/24℃（适合户外活动）  </span><br><span class="line"></span><br><span class="line">#### **上午：西湖经典环线**  </span><br><span class="line">- **交通**：建议步行或骑行共享单车（西湖周边有多个租车点）。  </span><br><span class="line">- **路线**：  </span><br><span class="line">  - **断桥残雪** → **白堤** → **平湖秋月**（感受西湖晨景）。  </span><br><span class="line">  - **乘船游三潭印月**（船票约50元，可登岛游览）。  </span><br><span class="line">- **推荐餐厅**：**楼外楼**（杭帮菜名店，推荐西湖醋鱼、东坡肉）。  </span><br><span class="line"></span><br><span class="line">#### **下午：灵隐寺 &amp; 天竺路**  </span><br><span class="line">- **交通**：打车或公交（7路/灵隐专线）至灵隐寺。  </span><br><span class="line">- **游览**：  </span><br><span class="line">  - **灵隐寺**（门票45元，含飞来峰景区）。  </span><br><span class="line">  - **天竺路**（步行游览下天竺、中天竺、上天竺三座古寺）。  </span><br><span class="line">- **推荐餐厅**：**知竹素面**（灵隐寺附近，推荐山菇手擀面）。  </span><br><span class="line"></span><br><span class="line">#### **晚上：雷峰塔夜景 &amp; 印象西湖演出**  </span><br><span class="line">- **交通**：打车至雷峰塔（约15分钟）。  </span><br><span class="line">- **活动**：  </span><br><span class="line">  - **雷峰塔日落**（登塔俯瞰西湖全景）。  </span><br><span class="line">  - **《印象西湖》实景演出**（需提前购票）。  </span><br><span class="line"></span><br><span class="line">#### **住宿推荐**：  </span><br><span class="line">- **杭州见山轻奢酒店（西湖灵隐寺店）**（近灵隐寺，环境清幽）。  </span><br><span class="line">- **杭州JW万豪酒店**（西湖附近，高端舒适）。  </span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### **Day 2（6月17日，周二）：西溪湿地 &amp; 宋城穿越体验**  </span><br><span class="line">**天气**：晴，36/24℃（较热，注意防晒）  </span><br><span class="line"></span><br><span class="line">#### **上午：西溪湿地公园**  </span><br><span class="line">- **交通**：打车或地铁3号线至西溪湿地南站。  </span><br><span class="line">- **游览**：  </span><br><span class="line">  - **摇橹船体验**（深入湿地，观察水鸟）。  </span><br><span class="line">  - **高庄、深潭口等景点**（门票80元）。  </span><br><span class="line">- **推荐餐厅**：湿地内**芦荻湾餐厅**（农家菜，推荐河鲜）。  </span><br><span class="line"></span><br><span class="line">#### **下午：宋城景区**  </span><br><span class="line">- **交通**：打车约30分钟。  </span><br><span class="line">- **游览**：  </span><br><span class="line">  - **《宋城千古情》演出**（沉浸式宋代文化体验）。  </span><br><span class="line">  - **仿古街市、鬼屋等娱乐项目**。  </span><br><span class="line">- **晚餐推荐**：宋城内**孙家酒楼**（杭帮菜与宋代风味结合）。  </span><br><span class="line"></span><br><span class="line">#### **住宿推荐**：  </span><br><span class="line">- **宋城景区内主题酒店**（方便夜游）。  </span><br><span class="line">- **杭州临平万丽酒店**（时尚设计，适合年轻人）。  </span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### **Day 3（6月18日，周三）：运河文化 &amp; 现代杭州探索**  </span><br><span class="line">**天气**：小雨转多云，36/25℃（午后可能有阵雨）  </span><br><span class="line"></span><br><span class="line">#### **上午：京杭大运河游览**  </span><br><span class="line">- **交通**：地铁5号线至拱宸桥站。  </span><br><span class="line">- **游览**：  </span><br><span class="line">  - **运河博物馆**（免费，了解运河历史）。  </span><br><span class="line">  - **水上巴士**（3元，体验运河风光）。  </span><br><span class="line">- **推荐餐厅**：**小河直街·江南驿**（文艺小馆，推荐醉蟹）。  </span><br><span class="line"></span><br><span class="line">#### **下午：中国美院 &amp; 南山路艺术街**  </span><br><span class="line">- **交通**：打车或公交至南山路。  </span><br><span class="line">- **游览**：  </span><br><span class="line">  - **中国美术学院（象山校区）**（建筑风格独特，适合拍照）。  </span><br><span class="line">  - **南山路艺术街区**（咖啡馆、画廊聚集地）。  </span><br><span class="line"></span><br><span class="line">#### **晚上：钱江新城灯光秀**  </span><br><span class="line">- **交通**：地铁4号线至市民中心站。  </span><br><span class="line">- **活动**：  </span><br><span class="line">  - **城市阳台观景**（灯光秀时间：19:30、20:30）。  </span><br><span class="line"></span><br><span class="line">#### **住宿推荐**：  </span><br><span class="line">- **杭州JW万豪酒店**（近钱江新城，方便夜景游览）。  </span><br><span class="line">- **杭州见山轻奢酒店**（返程前最后一晚，安静舒适）。  </span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">### **交通 &amp; 天气贴士**  </span><br><span class="line">1. **天气变化**：6月18日可能有小雨，建议随身带伞。  </span><br><span class="line">2. **交通方式**：  </span><br><span class="line">   - 西湖周边建议步行/骑行。  </span><br><span class="line">   - 远距离景点（如宋城、西溪）建议打车或地铁。  </span><br><span class="line">3. **防晒防暑**：6月17日高温36℃，需备防晒霜、帽子。  </span><br><span class="line"></span><br><span class="line">希望这份计划能帮助您畅游杭州！如需更详细景点信息，可参考相关网页。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-Chatflow"><a href="#5-Chatflow" class="headerlink" title="5. Chatflow"></a>5. Chatflow</h2><h2 id="6-Workflow"><a href="#6-Workflow" class="headerlink" title="6. Workflow"></a>6. Workflow</h2>
+        </article>
+        <section class="post-near">
+            <ul>
+                
+                    <li>上一篇: 看完啦 (つд⊂)</li>
+                
+                
+                    <li>下一篇: <a href="/2025/06/07/prompt/">prompt学习笔记</a></li>
+                
+            </ul>
+        </section>
+        
+            <section class="post-tags">
+            <a class="-none-link" href="/tags/Dify/" rel="tag">Dify</a>
+            </section>
+        
+    
+        <section class="post-author">
+        
+            <figure class="author-avatar">
+                <img src="https://sdn.geekzu.org/avatar/d22eb460ecab37fcd7205e6a3c55c228?s=200&r=X&d=" alt="hduer" />
+            </figure>
+        
+            <div class="author-info">
+                <h4>hduer</h4>
+                <p>一个热爱生活的hduer</p>
+            </div>
+        </section>
+    
+    </div>
+</main>
+
+    <footer>
+    <div class="buttons">
+        <button class="to-top" href="#"></button>
+    </div>
+    <div class="wrap min">
+        <section class="widget">
+            <div class="row">
+                <div class="col-m-4">
+                    <h3 class="title-recent">最新文章：</h3>
+                    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2025/06/15/Dify%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Dify基础学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/06/07/prompt/">prompt学习笔记</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-date">时光机：</h3>
+                    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-tags">标签云：</h3>
+                    <a href="/tags/Dify/" style="font-size: 10px;">Dify</a> <a href="/tags/prompt/" style="font-size: 10px;">prompt</a>
+                </div>
+            </div>
+        </section>
+        <section class="sub-footer">
+            <p>© 2025 <a href="/">Hduer</a>. All Rights Reserved. Theme By <a href="https://github.com/Dreamer-Paul/Hingle" target="_blank" rel="nofollow">Hingle</a>.</p>
+        </section>
+    </div>
+</footer>
+
+
+<script src="/static/kico.js"></script>
+<script src="/static/hingle.js"></script>
+
+
+<script>var hingle = new Paul_Hingle({"copyright":true,"night":true});</script>
+
+  </body>
+</html>
