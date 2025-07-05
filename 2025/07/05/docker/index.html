@@ -248,7 +248,8 @@
 <p>如对于基础练习的exercise1可编写以下的Dockerfile:</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">22.04</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新包索引并安装 nginx 和 curl</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    apt-get install -y nginx curl</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建简单的 HTML 文件</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">echo</span> <span class="string">&quot;Hello Docker!&quot;</span> &gt; /var/www/html/index.html</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 暴露 80 端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 nginx 服务,-g参数表示全局配置,daemon off表示不用以守护进程运行</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="3-4-常见问题"><a href="#3-4-常见问题" class="headerlink" title="3.4 常见问题"></a>3.4 常见问题</h3><h2 id="四-容器（Container）"><a href="#四-容器（Container）" class="headerlink" title="四. 容器（Container）"></a>四. 容器（Container）</h2><h3 id="4-1-容器是什么"><a href="#4-1-容器是什么" class="headerlink" title="4.1 容器是什么"></a>4.1 容器是什么</h3><p>容器是基于镜像<strong>运行起来的实例</strong>，是应用真正运行的环境。容器中包含镜像的内容，并加上一层读写层，允许运行时修改（但不会影响原始镜像）。</p>
+
+<h2 id="四-容器（Container）"><a href="#四-容器（Container）" class="headerlink" title="四. 容器（Container）"></a>四. 容器（Container）</h2><h3 id="4-1-容器是什么"><a href="#4-1-容器是什么" class="headerlink" title="4.1 容器是什么"></a>4.1 容器是什么</h3><p>容器是基于镜像<strong>运行起来的实例</strong>，是应用真正运行的环境。容器中包含镜像的内容，并加上一层读写层，允许运行时修改（但不会影响原始镜像）。</p>
 <h3 id="4-2-容器与镜像的对比表"><a href="#4-2-容器与镜像的对比表" class="headerlink" title="4.2 容器与镜像的对比表"></a>4.2 容器与镜像的对比表</h3><table>
 <thead>
 <tr>
@@ -459,7 +460,7 @@
 </tbody></table>
 <p>官方文档: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/cli/docker/compose/">Docker Compose命令</a></p>
 <h2 id="六-数据卷（Volume）"><a href="#六-数据卷（Volume）" class="headerlink" title="六. 数据卷（Volume）"></a>六. 数据卷（Volume）</h2><h3 id="6-1-数据卷是什么"><a href="#6-1-数据卷是什么" class="headerlink" title="6.1 数据卷是什么"></a>6.1 数据卷是什么</h3><p><strong>数据卷（volume）<strong>是一个虚拟目录，是</strong>容器内目录</strong>与<strong>宿主机目录</strong>之间映射的桥梁。数据卷常用于持久化和共享数据。通过数据卷,实现了容器内目录与宿主机目录之间的<strong>双向绑定</strong>。</p>
-<p><img src="C:/Users/Liming/AppData/Roaming/Typora/typora-user-images/image-20250705161816037.png" alt="image-20250705161816037"></p>
+<p><img src="/images/image-20250705161816037.png" alt="image-20250705161816037"></p>
 <p>注意：容器与数据卷的挂载要在创建容器时配置，对于创建好的容器，是不能设置数据卷的。而且<strong>创建容器的过程中，数据卷会自动创建</strong>。</p>
 <h3 id="6-2-数据卷常用命令"><a href="#6-2-数据卷常用命令" class="headerlink" title="6.2 数据卷常用命令"></a>6.2 数据卷常用命令</h3><table>
 <thead>
