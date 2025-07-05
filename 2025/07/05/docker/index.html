@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    
+    <meta charset="UTF-8">
+    <title>docker - Hduer</title>
+    <link rel="shortcut icon" href="/static/img/icon.png">
+    <link rel="icon" href="/static/img/icon.png" sizes="192x192"/>
+    
+<link rel="stylesheet" href="/static/kico.css">
+<link rel="stylesheet" href="/static/hingle.css">
+
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:site_name" content="Hduer">
+    <meta property="og:title" content="docker"/>
+    
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+    <div class="head-title">
+        <h4>Hduer</h4>
+    </div>
+    <div class="head-action">
+        <div class="toggle-btn"></div>
+        <div class="light-btn"></div>
+        <div class="search-btn"></div>
+    </div>
+    <form class="head-search" method="post">
+        <input type="text" name="s" placeholder="搜索什么？">
+    </form>
+    <nav class="head-menu">
+        <a href="/">首页</a>
+        <div class="has-child">
+            <a href>分类</a>
+            <div class="sub-menu">
+                <a class="category-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a>
+            </div>
+        </div>
+        
+            <a href="/about">关于我</a>
+        
+            <a href="/friends">朋友们</a>
+        
+    </nav>
+</header>
+
+    <main>
+    <div class="wrap min">
+        <section class="post-title">
+            <h2>docker</h2>
+            <div class="post-meta">
+                <time class="date">2025.07.05</time>
+            
+            </div>
+        </section>
+        <article class="post-content">
+        
+            <h1 id="Docker学习笔记"><a href="#Docker学习笔记" class="headerlink" title="Docker学习笔记"></a>Docker学习笔记</h1><h2 id="一-Docker基础概念"><a href="#一-Docker基础概念" class="headerlink" title="一. Docker基础概念"></a>一. Docker基础概念</h2><h3 id="1-1-Docker是什么"><a href="#1-1-Docker是什么" class="headerlink" title="1.1 Docker是什么"></a>1.1 Docker是什么</h3><p>Docker 是一个用于开发、发布和运行应用程序的开放平台。Docker 提供了在松散隔离的环境中（称为容器）打包和运行应用程序的功能。这种隔离性和安全性可以在给定主机上同时运行多个容器。容器是轻量级的，包含运行应用程序所需的一切，因此无需依赖主机上已安装的内容。您可以在工作时共享容器，并确保与您共享的每个人都能获得相同的容器并以相同的方式工作。可参考官方文档: <a target="_blank" rel="noopener" href="https://docs.docker.com/">dockerdocs</a></p>
+<h3 id="1-2-Docker解决了什么问题"><a href="#1-2-Docker解决了什么问题" class="headerlink" title="1.2 Docker解决了什么问题"></a>1.2 Docker解决了什么问题</h3><ul>
+<li><strong>环境不一致问题:</strong> 通过容器镜像封装一切依赖（代码、运行时、库、配置等），“一次构建，到处运行”。</li>
+<li><strong>应用部署复杂问题:</strong> 镜像打包即部署，部署逻辑自动化；每个容器相互隔离，解决端口冲突、库冲突等；通过版本化镜像，轻松实现升级和回滚。</li>
+<li><strong>资源利用率低的问题:</strong> 容器是轻量级的，不需要完整操作系统，启动快，占用资源少；在同一台机器上可以运行多个容器，提高资源利用率</li>
+<li><strong>持续集成&#x2F;持续交付（CI&#x2F;CD）困难:</strong> 容器天然适合集成在 CI&#x2F;CD 流程中；自动构建镜像、运行测试容器、发布新版本；保证发布的一致性和稳定性。</li>
+<li><strong>多语言&#x2F;多架构支持困难:</strong> 每个服务一个镜像，互不影响；用 Docker Compose 管理多个容器，方便构建微服务架构。</li>
+</ul>
+<h3 id="1-3-Docker架构"><a href="#1-3-Docker架构" class="headerlink" title="1.3 Docker架构"></a>1.3 Docker架构</h3><p>Docker 采用客户端-服务器架构。Docker 客户端与 Docker 守护进程通信，后者负责构建、运行和分发 Docker 容器等繁重工作。Docker 客户端和守护进程可以运行在同一系统上，或者您可以将 Docker 客户端连接到远程 Docker 守护进程。Docker 客户端和守护进程使用 REST API、UNIX 套接字或网络接口进行通信。另一个 Docker 客户端是 Docker Compose，它允许您处理由一组容器组成的应用程序。</p>
+<p><img src="https://docs.docker.com/get-started/images/docker-architecture.webp" alt="Docker Architecture diagram"></p>
+<h2 id="二-镜像-image"><a href="#二-镜像-image" class="headerlink" title="二. 镜像 (image)"></a>二. 镜像 (image)</h2><h3 id="2-1-镜像是什么"><a href="#2-1-镜像是什么" class="headerlink" title="2.1 镜像是什么"></a>2.1 镜像是什么</h3><p>镜像是一个只读的模板，包含了运行应用所需的一切内容：<strong>代码、依赖、运行时、环境变量、配置文件等</strong>。可以理解为一份“蓝图”或者“快照”。</p>
+<h3 id="2-2-镜像仓库-Docker-Hub"><a href="#2-2-镜像仓库-Docker-Hub" class="headerlink" title="2.2 镜像仓库 (Docker Hub)"></a>2.2 镜像仓库 (Docker Hub)</h3><p>Docker官方提供了一个专门管理、存储镜像的网站，并对外开放了镜像上传、下载的权利。Docker官方提供了一些基础镜像，然后各大软件公司又在基础镜像基础上，制作了自家软件的镜像，全部都存放在这个网站。这个网站就成了Docker镜像交流的社区：<a target="_blank" rel="noopener" href="https://hub.docker.com/">Docker Hub 官网</a></p>
+<p>基本上我们常用的各种软件都能在这个网站上找到，我们甚至可以自己制作镜像上传上去。</p>
+<p><img src="/images/image-20250705152729295.png" alt="image-20250705152729295"></p>
+<h3 id="2-3-常用镜像命令"><a href="#2-3-常用镜像命令" class="headerlink" title="2.3 常用镜像命令"></a>2.3 常用镜像命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker images</code></td>
+<td>查看本地已有的镜像列表</td>
+<td><code>docker images</code></td>
+</tr>
+<tr>
+<td><code>docker pull</code></td>
+<td>从远程仓库下载镜像</td>
+<td><code>docker pull nginx:latest</code></td>
+</tr>
+<tr>
+<td><code>docker build</code></td>
+<td>基于 Dockerfile 构建镜像</td>
+<td><code>docker build -t myapp:1.0 .</code></td>
+</tr>
+<tr>
+<td><code>docker rmi</code></td>
+<td>删除镜像</td>
+<td><code>docker rmi nginx</code></td>
+</tr>
+<tr>
+<td><code>docker save</code></td>
+<td>将镜像保存为 tar 文件</td>
+<td><code>docker save -o myapp.tar myapp:1.0</code></td>
+</tr>
+<tr>
+<td><code>docker load</code></td>
+<td>从 tar 文件加载镜像</td>
+<td><code>docker load -i myapp.tar</code></td>
+</tr>
+<tr>
+<td><code>docker history</code></td>
+<td>查看镜像构建历史（每层信息）</td>
+<td><code>docker history nginx</code></td>
+</tr>
+<tr>
+<td><code>docker inspect</code></td>
+<td>查看镜像详细元数据（JSON 格式）</td>
+<td><code>docker inspect nginx</code></td>
+</tr>
+<tr>
+<td><code>docker search</code></td>
+<td>搜索镜像仓库中的镜像</td>
+<td><code>docker search redis</code></td>
+</tr>
+<tr>
+<td><code>docker push</code></td>
+<td>推送镜像到远程仓库（如 Docker Hub）</td>
+<td><code>docker push myrepo/myapp:1.0</code></td>
+</tr>
+</tbody></table>
+<p>更多命令可参照官方文档: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/cli/docker/">docker官网命令</a></p>
+<h2 id="三-自定义镜像-Dockerfile"><a href="#三-自定义镜像-Dockerfile" class="headerlink" title="三. 自定义镜像 (Dockerfile)"></a>三. 自定义镜像 (Dockerfile)</h2><h3 id="3-1-镜像的结构"><a href="#3-1-镜像的结构" class="headerlink" title="3.1 镜像的结构"></a>3.1 镜像的结构</h3><p>Docker 镜像是由多层（layer）组成的，每一层都是一个文件系统变更（比如添加文件、安装软件、设置环境变量等）。</p>
+<p>举个简单的镜像结构示意图：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">┌────────────────────┐</span><br><span class="line">│ Layer 4: 应用配置   │</span><br><span class="line">├────────────────────┤</span><br><span class="line">│ Layer 3: 应用依赖   │</span><br><span class="line">├────────────────────┤</span><br><span class="line">│ Layer 2: 操作系统包 │</span><br><span class="line">├────────────────────┤</span><br><span class="line">│ Layer 1: 基础系统   │</span><br><span class="line">└────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>MySQL镜像大约的结构(以 mysql:8.0 为例）:</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>内容说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Layer 1</td>
+<td><code>debian</code> 系统基础层（MySQL 官方以 Debian 为基础）</td>
+</tr>
+<tr>
+<td>Layer 2</td>
+<td>添加系统工具（如 bash、coreutils）</td>
+</tr>
+<tr>
+<td>Layer 3</td>
+<td>安装 MySQL 依赖库与用户</td>
+</tr>
+<tr>
+<td>Layer 4</td>
+<td>安装 MySQL Server 本体（.deb 包）</td>
+</tr>
+<tr>
+<td>Layer 5</td>
+<td>添加启动脚本、配置等</td>
+</tr>
+<tr>
+<td>Layer 6</td>
+<td>设置默认环境变量、端口等</td>
+</tr>
+<tr>
+<td>Layer 7</td>
+<td>设置启动命令（如 <code>mysqld</code>）</td>
+</tr>
+</tbody></table>
+<h3 id="3-2-Dockerfile是什么"><a href="#3-2-Dockerfile是什么" class="headerlink" title="3.2 Dockerfile是什么"></a>3.2 Dockerfile是什么</h3><p>由于制作镜像的过程中，需要逐层处理和打包，比较复杂，所以Docker就提供了自动打包镜像的功能。我们只需要将打包的过程，每一层要做的事情用固定的语法写下来，交给Docker去执行即可。而这种记录镜像结构的文件就称为<strong>Dockerfile</strong>，其对应的语法可以参考官方文档：<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder/">Dockerfile官方文档</a></p>
+<h3 id="3-3-Dockerfile常用指令"><a href="#3-3-Dockerfile常用指令" class="headerlink" title="3.3 Dockerfile常用指令"></a>3.3 Dockerfile常用指令</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>用途</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>FROM</strong></td>
+<td>指定基础镜像（必须是第一条）</td>
+<td><code>FROM python:3.10</code></td>
+</tr>
+<tr>
+<td><strong>RUN</strong></td>
+<td>在镜像构建时执行命令（如安装依赖）</td>
+<td><code>RUN apt-get update &amp;&amp; apt-get install -y curl</code></td>
+</tr>
+<tr>
+<td><strong>CMD</strong></td>
+<td>指定容器启动后要执行的命令（可被覆盖）</td>
+<td><code>CMD [&quot;python&quot;, &quot;app.py&quot;]</code></td>
+</tr>
+<tr>
+<td><strong>ENTRYPOINT</strong></td>
+<td>指定入口命令，通常与 CMD 配合</td>
+<td><code>ENTRYPOINT [&quot;docker-entrypoint.sh&quot;]</code></td>
+</tr>
+<tr>
+<td><strong>COPY</strong></td>
+<td>将主机文件复制到镜像中</td>
+<td><code>COPY . /app</code></td>
+</tr>
+<tr>
+<td><strong>ADD</strong></td>
+<td>类似 COPY，但支持解压 tar&#x2F;URL 下载</td>
+<td><code>ADD app.tar.gz /app</code></td>
+</tr>
+<tr>
+<td><strong>WORKDIR</strong></td>
+<td>设置工作目录（之后命令以此为当前目录）</td>
+<td><code>WORKDIR /app</code></td>
+</tr>
+<tr>
+<td><strong>EXPOSE</strong></td>
+<td>声明容器要监听的端口（不会自动映射）</td>
+<td><code>EXPOSE 8080</code></td>
+</tr>
+<tr>
+<td><strong>ENV</strong></td>
+<td>设置环境变量</td>
+<td><code>ENV PORT=8080</code></td>
+</tr>
+<tr>
+<td><strong>VOLUME</strong></td>
+<td>声明挂载点（持久化数据）</td>
+<td><code>VOLUME [&quot;/data&quot;]</code></td>
+</tr>
+<tr>
+<td><strong>USER</strong></td>
+<td>指定运行容器时的用户</td>
+<td><code>USER node</code></td>
+</tr>
+<tr>
+<td><strong>ARG</strong></td>
+<td>构建时传参（与 ENV 不同）</td>
+<td><code>ARG APP_VERSION=1.0</code></td>
+</tr>
+</tbody></table>
+<p>其对应的语法可以参考官方文档：<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder/">Dockerfile官网指令</a></p>
+<p>如对于基础练习的exercise1可编写以下的Dockerfile:</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">22.04</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新包索引并安装 nginx 和 curl</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    apt-get install -y nginx curl</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建简单的 HTML 文件</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">echo</span> <span class="string">&quot;Hello Docker!&quot;</span> &gt; /var/www/html/index.html</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 暴露 80 端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 nginx 服务,-g参数表示全局配置,daemon off表示不用以守护进程运行</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-常见问题"><a href="#3-4-常见问题" class="headerlink" title="3.4 常见问题"></a>3.4 常见问题</h3><h2 id="四-容器（Container）"><a href="#四-容器（Container）" class="headerlink" title="四. 容器（Container）"></a>四. 容器（Container）</h2><h3 id="4-1-容器是什么"><a href="#4-1-容器是什么" class="headerlink" title="4.1 容器是什么"></a>4.1 容器是什么</h3><p>容器是基于镜像<strong>运行起来的实例</strong>，是应用真正运行的环境。容器中包含镜像的内容，并加上一层读写层，允许运行时修改（但不会影响原始镜像）。</p>
+<h3 id="4-2-容器与镜像的对比表"><a href="#4-2-容器与镜像的对比表" class="headerlink" title="4.2 容器与镜像的对比表"></a>4.2 容器与镜像的对比表</h3><table>
+<thead>
+<tr>
+<th>比较项</th>
+<th>镜像 (Image)</th>
+<th>容器 (Container)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>定义</td>
+<td>应用和环境的静态模板</td>
+<td>镜像的运行实例</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>静态的、只读的</td>
+<td>动态的、可读写的</td>
+</tr>
+<tr>
+<td>创建方式</td>
+<td>通过 Dockerfile 构建或 pull 获得</td>
+<td>通过 <code>docker run</code> 从镜像生成</td>
+</tr>
+<tr>
+<td>是否可运行</td>
+<td>否</td>
+<td>是，是真正运行的应用</td>
+</tr>
+<tr>
+<td>生命周期管理</td>
+<td>不需要，始终存在</td>
+<td>可以启动、停止、删除、重启</td>
+</tr>
+<tr>
+<td>类比</td>
+<td>面包模具、系统镜像</td>
+<td>面包、运行中的程序&#x2F;虚拟机</td>
+</tr>
+</tbody></table>
+<h3 id="4-3-常用容器命令"><a href="#4-3-常用容器命令" class="headerlink" title="4.3 常用容器命令"></a>4.3 常用容器命令</h3><p>容器生命周期管理命令:</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker run</code></td>
+<td>创建并启动一个新容器</td>
+<td><code>docker run -d -p 8080:80 nginx</code></td>
+</tr>
+<tr>
+<td><code>docker ps</code></td>
+<td>查看正在运行的容器</td>
+<td><code>docker ps</code></td>
+</tr>
+<tr>
+<td><code>docker start</code></td>
+<td>启动已停止的容器</td>
+<td><code>docker start mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker stop</code></td>
+<td>停止正在运行的容器</td>
+<td><code>docker stop mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker restart</code></td>
+<td>重启容器</td>
+<td><code>docker restart mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker rm</code></td>
+<td>删除容器（只能删除已停止的）</td>
+<td><code>docker rm mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker kill</code></td>
+<td>强制终止容器</td>
+<td><code>docker kill mycontainer</code></td>
+</tr>
+</tbody></table>
+<p>容器状态与交互命令:</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker logs</code></td>
+<td>查看容器输出日志</td>
+<td><code>docker logs mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker exec</code></td>
+<td>在运行容器中执行命令（推荐）</td>
+<td><code>docker exec -it mycontainer bash</code></td>
+</tr>
+<tr>
+<td><code>docker top</code></td>
+<td>查看容器内进程列表</td>
+<td><code>docker top mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker inspect</code></td>
+<td>查看容器详细信息（JSON）</td>
+<td><code>docker inspect mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker stats</code></td>
+<td>实时查看容器资源占用</td>
+<td><code>docker stats</code></td>
+</tr>
+</tbody></table>
+<p>容器创建与运行常用参数:</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-d</code></td>
+<td>后台运行容器</td>
+<td><code>docker run -d nginx</code></td>
+</tr>
+<tr>
+<td><code>--name</code></td>
+<td>给容器命名</td>
+<td><code>--name mynginx</code></td>
+</tr>
+<tr>
+<td><code>-p</code></td>
+<td>映射端口</td>
+<td><code>-p 8080:80</code></td>
+</tr>
+<tr>
+<td><code>-v</code></td>
+<td>挂载数据卷</td>
+<td><code>-v /host/path:/container/path</code></td>
+</tr>
+<tr>
+<td><code>-e</code></td>
+<td>设置环境变量</td>
+<td><code>-e MYSQL_ROOT_PASSWORD=123456</code></td>
+</tr>
+<tr>
+<td><code>--rm</code></td>
+<td>容器退出后自动删除</td>
+<td><code>--rm</code></td>
+</tr>
+<tr>
+<td><code>--restart</code></td>
+<td>设置重启策略</td>
+<td><code>--restart=always</code></td>
+</tr>
+</tbody></table>
+<h2 id="五-多容器编排-Docker-Compose"><a href="#五-多容器编排-Docker-Compose" class="headerlink" title="五. 多容器编排 (Docker Compose)"></a>五. 多容器编排 (Docker Compose)</h2><h3 id="5-1-Docker-Compose是什么"><a href="#5-1-Docker-Compose是什么" class="headerlink" title="5.1 Docker Compose是什么"></a>5.1 Docker Compose是什么</h3><p>Docker Compose 是一个用来<strong>定义和运行多容器 Docker 应用</strong>的工具。通过一个名为 <code>docker-compose.yml</code> 的文件，描述服务（service）、网络、卷等所有内容。</p>
+<h3 id="5-2-基本语法"><a href="#5-2-基本语法" class="headerlink" title="5.2 基本语法"></a>5.2 基本语法</h3><p>docker-compose文件中可以定义多个相互关联的应用容器，每一个应用容器被称为一个服务（service）。由于service就是在定义某个应用的运行时参数，因此与<code>docker run</code>参数非常相似。</p>
+<p>举例来说，用docker run部署MySQL的命令如下：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="language-bash"> -d \</span></span><br><span class="line"><span class="language-bash">  --name mysql \</span></span><br><span class="line"><span class="language-bash">  -p 3306:3306 \</span></span><br><span class="line"><span class="language-bash">  -e TZ=Asia/Shanghai \</span></span><br><span class="line"><span class="language-bash">  -e MYSQL_ROOT_PASSWORD=123 \</span></span><br><span class="line"><span class="language-bash">  -v ./mysql/data:/var/lib/mysql \</span></span><br><span class="line"><span class="language-bash">  -v ./mysql/conf:/etc/mysql/conf.d \</span></span><br><span class="line"><span class="language-bash">  -v ./mysql/init:/docker-entrypoint-initdb.d \</span></span><br><span class="line"><span class="language-bash">  --network hmall</span></span><br><span class="line">  mysql</span><br></pre></td></tr></table></figure>
+
+<p>如果用<code>docker-compose.yml</code>文件来定义，就是这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3.8&quot;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  mysql:</span><br><span class="line">    image: mysql</span><br><span class="line">    container_name: mysql</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3306:3306&quot;</span><br><span class="line">    environment:</span><br><span class="line">      TZ: Asia/Shanghai</span><br><span class="line">      MYSQL_ROOT_PASSWORD: 123</span><br><span class="line">    volumes:</span><br><span class="line">      - &quot;./mysql/conf:/etc/mysql/conf.d&quot;</span><br><span class="line">      - &quot;./mysql/data:/var/lib/mysql&quot;</span><br><span class="line">    networks:</span><br><span class="line">      - new</span><br><span class="line">networks:</span><br><span class="line">  new:</span><br><span class="line">    name: hmall</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-常用命令"><a href="#5-3-常用命令" class="headerlink" title="5.3 常用命令"></a>5.3 常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker-compose up</code></td>
+<td>启动所有服务（需在文件目录下）</td>
+</tr>
+<tr>
+<td><code>docker-compose up -d</code></td>
+<td>后台启动所有服务</td>
+</tr>
+<tr>
+<td><code>docker-compose down</code></td>
+<td>停止并删除容器、网络、卷</td>
+</tr>
+<tr>
+<td><code>docker-compose ps</code></td>
+<td>查看服务状态</td>
+</tr>
+<tr>
+<td><code>docker-compose logs</code></td>
+<td>查看所有容器日志</td>
+</tr>
+<tr>
+<td><code>docker-compose build</code></td>
+<td>构建镜像（如果用了 <code>build:</code>）</td>
+</tr>
+<tr>
+<td><code>docker-compose restart</code></td>
+<td>重启所有服务</td>
+</tr>
+</tbody></table>
+<p>官方文档: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/cli/docker/compose/">Docker Compose命令</a></p>
+<h2 id="六-数据卷（Volume）"><a href="#六-数据卷（Volume）" class="headerlink" title="六. 数据卷（Volume）"></a>六. 数据卷（Volume）</h2><h3 id="6-1-数据卷是什么"><a href="#6-1-数据卷是什么" class="headerlink" title="6.1 数据卷是什么"></a>6.1 数据卷是什么</h3><p><strong>数据卷（volume）<strong>是一个虚拟目录，是</strong>容器内目录</strong>与<strong>宿主机目录</strong>之间映射的桥梁。数据卷常用于持久化和共享数据。通过数据卷,实现了容器内目录与宿主机目录之间的<strong>双向绑定</strong>。</p>
+<p><img src="C:/Users/Liming/AppData/Roaming/Typora/typora-user-images/image-20250705161816037.png" alt="image-20250705161816037"></p>
+<p>注意：容器与数据卷的挂载要在创建容器时配置，对于创建好的容器，是不能设置数据卷的。而且<strong>创建容器的过程中，数据卷会自动创建</strong>。</p>
+<h3 id="6-2-数据卷常用命令"><a href="#6-2-数据卷常用命令" class="headerlink" title="6.2 数据卷常用命令"></a>6.2 数据卷常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker volume create</code></td>
+<td>创建一个数据卷</td>
+<td><code>docker volume create mydata</code></td>
+</tr>
+<tr>
+<td><code>docker volume ls</code></td>
+<td>查看所有数据卷</td>
+<td><code>docker volume ls</code></td>
+</tr>
+<tr>
+<td><code>docker volume inspect</code></td>
+<td>查看数据卷详细信息（如挂载路径）</td>
+<td><code>docker volume inspect mydata</code></td>
+</tr>
+<tr>
+<td><code>docker volume rm</code></td>
+<td>删除一个数据卷（不能被容器使用中）</td>
+<td><code>docker volume rm mydata</code></td>
+</tr>
+</tbody></table>
+<p>注意: 一般我们在启动容器时挂载数据卷,常和docker run命令搭配使用:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 启动容器并挂载</span><br><span class="line">docker run -d -v mydata:/var/lib/mysql --name mysql-test mysql:8.0</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-命名卷与绑定挂载"><a href="#6-3-命名卷与绑定挂载" class="headerlink" title="6.3 命名卷与绑定挂载"></a>6.3 命名卷与绑定挂载</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>命名卷（Named Volume）</th>
+<th>绑定挂载（Bind Mount）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>数据存储位置</strong></td>
+<td>由 Docker 管理（<code>/var/lib/docker/volumes/</code>）</td>
+<td>宿主机的任意路径（如 <code>./init.sql</code>）</td>
+</tr>
+<tr>
+<td><strong>跨平台兼容性</strong></td>
+<td>好（Docker 自动处理路径格式）</td>
+<td>差（需手动适配 Windows&#x2F;macOS&#x2F;Linux 路径）</td>
+</tr>
+<tr>
+<td><strong>数据持久化</strong></td>
+<td>容器删除后数据保留</td>
+<td>容器删除后不影响宿主机文件</td>
+</tr>
+<tr>
+<td><strong>使用场景</strong></td>
+<td>应用数据持久化（如数据库、缓存）</td>
+<td>配置文件注入、临时数据交换</td>
+</tr>
+</tbody></table>
+<p>如对于专业练习exercise1中的docker-compose.yml文件可这样编写(既使用了命名卷又使用了绑定挂载):</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">version: &#x27;3.8&#x27;</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  mysql:</span><br><span class="line">    # 使用官方 MySQL 镜像</span><br><span class="line">    image: mysql:8.0</span><br><span class="line">    # 设置容器名称</span><br><span class="line">    container_name: exercise1</span><br><span class="line">    # 配置环境变量</span><br><span class="line">    environment:</span><br><span class="line">      # 设置 root 用户密码</span><br><span class="line">      MYSQL_ROOT_PASSWORD: 123456</span><br><span class="line">    # 配置数据卷持久化</span><br><span class="line">    volumes:</span><br><span class="line">      # 使用 named volume 持久化 MySQL 数据目录</span><br><span class="line">      - mysql-data:/var/lib/mysql</span><br><span class="line">      # 使用绑定挂载,将本地的 init.sql 绑定到容器内指定目录。MySQL 镜像启动时，会自动执行 /docker-entrypoint-initdb.d/ 目录下的 SQL 文件，用于初始化数据库。</span><br><span class="line">      - ./init.sql:/docker-entrypoint-initdb.d/init.sql</span><br><span class="line">    # 暴露端口到主机</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3306:3306&quot;</span><br><span class="line">    # 设置容器重启策略</span><br><span class="line">    restart: always</span><br><span class="line"></span><br><span class="line"># 定义 named volume</span><br><span class="line">volumes:</span><br><span class="line">  mysql-data:</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="七-网络（Network）"><a href="#七-网络（Network）" class="headerlink" title="七. 网络（Network）"></a>七. 网络（Network）</h2><h3 id="7-1-Docker网络的作用"><a href="#7-1-Docker网络的作用" class="headerlink" title="7.1 Docker网络的作用"></a>7.1 Docker网络的作用</h3><p>Docker 提供了强大且灵活的网络功能，用于<strong>容器之间的通信、容器与主机通信</strong>，以及<strong>跨主机通信</strong>。</p>
+<p>注意: 容器的网络IP其实是一个虚拟的IP，其值并不固定与某一个容器绑定，如果我们在开发时写死某个IP，而在部署时很可能MySQL容器的IP会发生变化，连接会失败。</p>
+<p>官方文档: <a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/commandline/network/">Docker网络</a></p>
+<h3 id="7-2-Docker中的网络类型"><a href="#7-2-Docker中的网络类型" class="headerlink" title="7.2 Docker中的网络类型"></a>7.2 Docker中的网络类型</h3><table>
+<thead>
+<tr>
+<th>网络模式</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>bridge</code>（桥接）</td>
+<td>默认网络模式，适合<strong>单主机上多个容器通信</strong></td>
+</tr>
+<tr>
+<td><code>host</code>（主机）</td>
+<td>容器与宿主机共用网络栈，<strong>无隔离</strong>，适合性能要求高的场景</td>
+</tr>
+<tr>
+<td><code>none</code>（无网络）</td>
+<td>容器完全没有网络接口，<strong>隔离性最强</strong></td>
+</tr>
+<tr>
+<td><code>container:&lt;name&gt;</code></td>
+<td>容器共享另一个容器的网络，适合多个进程需要共享网络时</td>
+</tr>
+<tr>
+<td>自定义 bridge 网络</td>
+<td>推荐方式，<strong>支持容器名称互通 + DNS 解析</strong></td>
+</tr>
+</tbody></table>
+<h3 id="7-3-网络常用命令"><a href="#7-3-网络常用命令" class="headerlink" title="7.3 网络常用命令"></a>7.3 网络常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker network ls</code></td>
+<td>查看所有 Docker 网络</td>
+<td><code>docker network ls</code></td>
+</tr>
+<tr>
+<td><code>docker network inspect</code></td>
+<td>查看某个网络的详细信息</td>
+<td><code>docker network inspect mynet</code></td>
+</tr>
+<tr>
+<td><code>docker network create</code></td>
+<td>创建一个自定义网络</td>
+<td><code>docker network create mynet</code></td>
+</tr>
+<tr>
+<td><code>docker network rm</code></td>
+<td>删除一个自定义网络</td>
+<td><code>docker network rm mynet</code></td>
+</tr>
+<tr>
+<td><code>docker network connect</code></td>
+<td>将容器连接到某个网络</td>
+<td><code>docker network connect mynet mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker network disconnect</code></td>
+<td>将容器从网络中断开</td>
+<td><code>docker network disconnect mynet mycontainer</code></td>
+</tr>
+<tr>
+<td><code>docker run --network</code></td>
+<td>创建容器时指定加入某网络</td>
+<td><code>docker run --network=mynet nginx</code></td>
+</tr>
+</tbody></table>
+<p>对于专业练习exercise2中的docker-compose.yml文件自定义桥接网络可这样编写:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">version: &#x27;3.8&#x27;</span><br><span class="line"></span><br><span class="line"># 自定义 bridge 网络</span><br><span class="line">networks:</span><br><span class="line">  mynet:</span><br><span class="line">    driver: bridge  # 使用 bridge 驱动，实现容器间隔离通信</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  # Web 服务</span><br><span class="line">  web:</span><br><span class="line">    build: .  # 从当前目录的 Dockerfile 构建镜像</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;5000:5000&quot;  # 主机端口映射到容器端口，外部可访问</span><br><span class="line">    networks:</span><br><span class="line">      - mynet  # 加入自定义 bridge 网络</span><br><span class="line">    depends_on:</span><br><span class="line">      - redis  # 依赖 redis 服务，确保启动顺序</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">  # Redis 服务</span><br><span class="line">  redis:</span><br><span class="line">    image: redis:7.2-alpine  # 轻量 Redis 镜像</span><br><span class="line">    networks:</span><br><span class="line">      - mynet  # 加入自定义 bridge 网络</span><br><span class="line">    volumes:</span><br><span class="line">      - redis-data:/data  # 持久化 Redis 数据</span><br><span class="line"></span><br><span class="line"># 持久化 Volume</span><br><span class="line">volumes:</span><br><span class="line">  redis-data:</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="八-RAG-智能问答系统容器化实践"><a href="#八-RAG-智能问答系统容器化实践" class="headerlink" title="八. RAG 智能问答系统容器化实践"></a>八. RAG 智能问答系统容器化实践</h2><p>项目待发布…</p>
+
+        </article>
+        <section class="post-near">
+            <ul>
+                
+                    <li>上一篇: 看完啦 (つд⊂)</li>
+                
+                
+                    <li>下一篇: <a href="/2025/06/28/transformer%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">transformer学习笔记</a></li>
+                
+            </ul>
+        </section>
+        
+            <section class="post-tags">
+            <a class="-none-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a>
+            </section>
+        
+    
+        <section class="post-author">
+        
+            <figure class="author-avatar">
+                <img src="https://sdn.geekzu.org/avatar/d22eb460ecab37fcd7205e6a3c55c228?s=200&r=X&d=" alt="hduer" />
+            </figure>
+        
+            <div class="author-info">
+                <h4>hduer</h4>
+                <p>一个热爱生活的hduer</p>
+            </div>
+        </section>
+    
+    </div>
+</main>
+
+    <footer>
+    <div class="buttons">
+        <button class="to-top" href="#"></button>
+    </div>
+    <div class="wrap min">
+        <section class="widget">
+            <div class="row">
+                <div class="col-m-4">
+                    <h3 class="title-recent">最新文章：</h3>
+                    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2025/07/05/docker/">docker</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/06/28/transformer%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">transformer学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/06/15/Dify%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Dify基础学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/06/07/prompt/">prompt学习笔记</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-date">时光机：</h3>
+                    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-tags">标签云：</h3>
+                    <a href="/tags/Dify/" style="font-size: 10px;">Dify</a> <a href="/tags/prompt/" style="font-size: 10px;">prompt</a> <a href="/tags/transformer/" style="font-size: 10px;">transformer</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 10px;">运维</a>
+                </div>
+            </div>
+        </section>
+        <section class="sub-footer">
+            <p>© 2025 <a href="/">Hduer</a>. All Rights Reserved. Theme By <a href="https://github.com/Dreamer-Paul/Hingle" target="_blank" rel="nofollow">Hingle</a>.</p>
+        </section>
+    </div>
+</footer>
+
+
+<script src="/static/kico.js"></script>
+<script src="/static/hingle.js"></script>
+
+
+<script>var hingle = new Paul_Hingle({"copyright":true,"night":true});</script>
+
+  </body>
+</html>
