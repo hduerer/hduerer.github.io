@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    
+    <meta charset="UTF-8">
+    <title>leetcode-Day1 - Hduer</title>
+    <link rel="shortcut icon" href="/static/img/icon.png">
+    <link rel="icon" href="/static/img/icon.png" sizes="192x192"/>
+    
+<link rel="stylesheet" href="/static/kico.css">
+<link rel="stylesheet" href="/static/hingle.css">
+
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:site_name" content="Hduer">
+    <meta property="og:title" content="leetcode-Day1"/>
+    
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+    <div class="head-title">
+        <h4>Hduer</h4>
+    </div>
+    <div class="head-action">
+        <div class="toggle-btn"></div>
+        <div class="light-btn"></div>
+        <div class="search-btn"></div>
+    </div>
+    <form class="head-search" method="post">
+        <input type="text" name="s" placeholder="搜索什么？">
+    </form>
+    <nav class="head-menu">
+        <a href="/">首页</a>
+        <div class="has-child">
+            <a href>分类</a>
+            <div class="sub-menu">
+                <a class="category-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="category-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a>
+            </div>
+        </div>
+        
+            <a href="/about">关于我</a>
+        
+            <a href="/friends">朋友们</a>
+        
+    </nav>
+</header>
+
+    <main>
+    <div class="wrap min">
+        <section class="post-title">
+            <h2>leetcode-Day1</h2>
+            <div class="post-meta">
+                <time class="date">2025.07.19</time>
+            
+            </div>
+        </section>
+        <article class="post-content">
+        
+            <h2 id="一-哈希思想"><a href="#一-哈希思想" class="headerlink" title="一. 哈希思想"></a>一. 哈希思想</h2><h3 id="1-定义"><a href="#1-定义" class="headerlink" title="1. 定义"></a>1. 定义</h3><p>哈希表（hash table），又称散列表，它通过建立键 <code>key</code> 与值 <code>value</code> 之间的映射，实现<strong>高效的元素查询</strong>。</p>
+<p><img src="/images%5Cimage-20250718160357832.png" alt="image-20250718160357832"></p>
+<h3 id="2-真实场景中的应用"><a href="#2-真实场景中的应用" class="headerlink" title="2. 真实场景中的应用"></a>2. <strong>真实场景中的应用</strong></h3><h4 id="2-1-Redis：键值存储使用哈希结构"><a href="#2-1-Redis：键值存储使用哈希结构" class="headerlink" title="2.1 Redis：键值存储使用哈希结构"></a>2.1 Redis：键值存储使用哈希结构</h4><ul>
+<li><p>Redis 的核心数据结构之一是 <strong>Hash（哈希表）</strong>，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HSET user:1 name &quot;Tom&quot; age 18</span><br></pre></td></tr></table></figure>
+
+<p>Redis 用 Hash 来存储多个字段的值，非常节省内存，底层就是哈希算法。</p>
+</li>
+<li><p>Redis 的 <code>Set</code>、<code>HashMap</code>、<code>HyperLogLog</code> 都依赖哈希函数用于快速查找、去重。</p>
+</li>
+</ul>
+<h4 id="2-2-数据库索引（如-MySQL）"><a href="#2-2-数据库索引（如-MySQL）" class="headerlink" title="2.2 数据库索引（如 MySQL）"></a>2.2 数据库索引（如 MySQL）</h4><ul>
+<li>MySQL 的某些引擎支持基于哈希的索引，比如 Memory 存储引擎，它会用哈希来加速 WHERE 查询。</li>
+</ul>
+<h4 id="2-3-密码加密（哈希加密）"><a href="#2-3-密码加密（哈希加密）" class="headerlink" title="2.3 密码加密（哈希加密）"></a>2.3 密码加密（哈希加密）</h4><ul>
+<li>像 <code>MD5</code>、<code>SHA256</code> 等哈希函数经常用于存储密码的“不可逆加密”。</li>
+</ul>
+<h2 id="二-常用类与方法"><a href="#二-常用类与方法" class="headerlink" title="二. 常用类与方法"></a>二. 常用类与方法</h2><h3 id="1-Java常用类"><a href="#1-Java常用类" class="headerlink" title="1. Java常用类"></a>1. Java常用类</h3><table>
+<thead>
+<tr>
+<th>类名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HashMap&lt;K, V&gt;</code></td>
+<td>键值对映射，允许 <code>null</code> 键和 <code>null</code> 值</td>
+</tr>
+<tr>
+<td><code>HashSet&lt;E&gt;</code></td>
+<td>存储无重复元素的集合，基于 <code>HashMap</code> 实现</td>
+</tr>
+<tr>
+<td><code>LinkedHashMap&lt;K, V&gt;</code></td>
+<td>有序的 HashMap，按插入顺序遍历</td>
+</tr>
+<tr>
+<td><code>TreeMap&lt;K, V&gt;</code></td>
+<td>排序的 Map，基于红黑树（不是哈希）</td>
+</tr>
+<tr>
+<td><code>Hashtable&lt;K, V&gt;</code></td>
+<td>线程安全的哈希表，已过时，不建议使用</td>
+</tr>
+<tr>
+<td><code>ConcurrentHashMap&lt;K, V&gt;</code></td>
+<td>支持并发访问的哈希表</td>
+</tr>
+</tbody></table>
+<h3 id="2-Java常用方法"><a href="#2-Java常用方法" class="headerlink" title="2. Java常用方法"></a>2. Java常用方法</h3><p><code>HashMap</code> :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>put(K key, V value)</code></td>
+<td>添加键值对，若 key 存在则覆盖</td>
+</tr>
+<tr>
+<td><code>get(K key)</code></td>
+<td>根据 key 获取对应的值，找不到返回 <code>null</code></td>
+</tr>
+<tr>
+<td><code>containsKey(K key)</code></td>
+<td>判断是否包含某个 key</td>
+</tr>
+<tr>
+<td><code>containsValue(V value)</code></td>
+<td>判断是否包含某个 value</td>
+</tr>
+<tr>
+<td><code>remove(K key)</code></td>
+<td>移除某个 key 及其对应的值</td>
+</tr>
+<tr>
+<td><code>size()</code></td>
+<td>返回元素个数</td>
+</tr>
+<tr>
+<td><code>isEmpty()</code></td>
+<td>判断是否为空</td>
+</tr>
+<tr>
+<td><code>keySet()</code></td>
+<td>返回所有 key 的集合（Set）</td>
+</tr>
+<tr>
+<td><code>values()</code></td>
+<td>返回所有 value 的集合（Collection）</td>
+</tr>
+<tr>
+<td><code>entrySet()</code></td>
+<td>返回所有键值对（Set&lt;Map.Entry&lt;K,V&gt;&gt;）</td>
+</tr>
+</tbody></table>
+<p>注意只能根据key获取value, 反之不可.</p>
+<p><code>HashSet</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;String&gt; set = new HashSet&lt;&gt;(); </span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>add(E e)</code></td>
+<td>添加元素</td>
+</tr>
+<tr>
+<td><code>contains(E e)</code></td>
+<td>判断是否包含</td>
+</tr>
+<tr>
+<td><code>remove(E e)</code></td>
+<td>删除元素</td>
+</tr>
+<tr>
+<td><code>size()</code></td>
+<td>获取大小</td>
+</tr>
+<tr>
+<td><code>isEmpty()</code></td>
+<td>判断是否为空</td>
+</tr>
+<tr>
+<td><code>clear()</code></td>
+<td>清空集合</td>
+</tr>
+<tr>
+<td><code>iterator()</code></td>
+<td>遍历集合</td>
+</tr>
+</tbody></table>
+<h2 id="三-实战"><a href="#三-实战" class="headerlink" title="三. 实战"></a>三. 实战</h2><h3 id="1-两数之和"><a href="#1-两数之和" class="headerlink" title="1. 两数之和"></a>1. 两数之和</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">题目: 给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 target  的那 两个 整数，并返回它们的数组下标。</span><br><span class="line"></span><br><span class="line">你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。</span><br><span class="line"></span><br><span class="line">你可以按任意顺序返回答案。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">示例 1：</span><br><span class="line"></span><br><span class="line">输入：nums = [2,7,11,15], target = 9</span><br><span class="line">输出：[0,1]</span><br><span class="line">解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。</span><br><span class="line">示例 2：</span><br><span class="line"></span><br><span class="line">输入：nums = [3,2,4], target = 6</span><br><span class="line">输出：[1,2]</span><br><span class="line">示例 3：</span><br><span class="line"></span><br><span class="line">输入：nums = [3,3], target = 6</span><br><span class="line">输出：[0,1]</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-1-菜鸟解法-两次for循环"><a href="#1-1-菜鸟解法-两次for循环" class="headerlink" title="1.1 菜鸟解法: 两次for循环:"></a>1.1 菜鸟解法: 两次for循环:</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] twoSum(<span class="type">int</span>[] nums, <span class="type">int</span> target) &#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> j=i+<span class="number">1</span>;j&lt;nums.length;j++)&#123;</span><br><span class="line">				<span class="keyword">if</span>(nums[i]+nums[j]==target)&#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;i,j&#125;;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-大神解法-利用哈希表"><a href="#1-2-大神解法-利用哈希表" class="headerlink" title="1.2 大神解法: 利用哈希表"></a>1.2 大神解法: 利用哈希表</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] twoSum(<span class="type">int</span>[] nums, <span class="type">int</span> target) &#123;</span><br><span class="line">		Map&lt;Integer,Integer&gt; hashmap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Integer,Integer&gt;();</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">			<span class="keyword">if</span>(hashmap.containsKey(target-nums[i]))&#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;hashmap.get(target-nums[i]),i&#125;;</span><br><span class="line">			&#125;</span><br><span class="line">			hashmap.put(nums[i],i);</span><br><span class="line">		&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-反思"><a href="#1-3-反思" class="headerlink" title="1.3 反思"></a>1.3 反思</h4><p>反思: 对于数组可以转化成哈希表, 可以大大提高查询的速度, 注意选好<code>key</code>与<code>value</code>.</p>
+<h3 id="2-字母异味词分组"><a href="#2-字母异味词分组" class="headerlink" title="2. 字母异味词分组"></a>2. 字母异味词分组</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">题目: 给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。</span><br><span class="line"></span><br><span class="line">示例 <span class="number">1</span>:</span><br><span class="line"></span><br><span class="line">输入: strs = [<span class="string">&quot;eat&quot;</span>, <span class="string">&quot;tea&quot;</span>, <span class="string">&quot;tan&quot;</span>, <span class="string">&quot;ate&quot;</span>, <span class="string">&quot;nat&quot;</span>, <span class="string">&quot;bat&quot;</span>]</span><br><span class="line"></span><br><span class="line">输出: [[<span class="string">&quot;bat&quot;</span>],[<span class="string">&quot;nat&quot;</span>,<span class="string">&quot;tan&quot;</span>],[<span class="string">&quot;ate&quot;</span>,<span class="string">&quot;eat&quot;</span>,<span class="string">&quot;tea&quot;</span>]]</span><br><span class="line"></span><br><span class="line">解释：</span><br><span class="line"></span><br><span class="line">在 strs 中没有字符串可以通过重新排列来形成 <span class="string">&quot;bat&quot;</span>。</span><br><span class="line">字符串 <span class="string">&quot;nat&quot;</span> 和 <span class="string">&quot;tan&quot;</span> 是字母异位词，因为它们可以重新排列以形成彼此。</span><br><span class="line">字符串 <span class="string">&quot;ate&quot;</span> ，<span class="string">&quot;eat&quot;</span> 和 <span class="string">&quot;tea&quot;</span> 是字母异位词，因为它们可以重新排列以形成彼此。</span><br><span class="line">示例 <span class="number">2</span>:</span><br><span class="line"></span><br><span class="line">输入: strs = [<span class="string">&quot;&quot;</span>]</span><br><span class="line"></span><br><span class="line">输出: [[<span class="string">&quot;&quot;</span>]]</span><br><span class="line"></span><br><span class="line">示例 <span class="number">3</span>:</span><br><span class="line"></span><br><span class="line">输入: strs = [<span class="string">&quot;a&quot;</span>]</span><br><span class="line"></span><br><span class="line">输出: [[<span class="string">&quot;a&quot;</span>]]</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-1-菜鸟解法"><a href="#2-1-菜鸟解法" class="headerlink" title="2.1 菜鸟解法:"></a>2.1 菜鸟解法:</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;List&lt;String&gt;&gt; <span class="title function_">groupAnagrams</span><span class="params">(String[] strs)</span> &#123;</span><br><span class="line">    	Map&lt;String,List&lt;String&gt;&gt; hashmap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;String,List&lt;String&gt;&gt;();</span><br><span class="line">    	<span class="keyword">for</span>(String str:strs)&#123;</span><br><span class="line">            <span class="type">char</span>[] chars=str.toCharArray();</span><br><span class="line">            Arrays.sort(chars);</span><br><span class="line">            <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(chars);</span><br><span class="line">            <span class="keyword">if</span>(hashmap.containsKey(key))&#123;</span><br><span class="line">                List&lt;String&gt; arrayList = hashmap.get(key);</span><br><span class="line">                arrayList.add(str);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                List&lt;String&gt; arrayList = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;();</span><br><span class="line">                arrayList.add(str);</span><br><span class="line">                hashmap.put(key,arrayList);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;List&lt;String&gt;&gt;(hashmap.values());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-大神解法"><a href="#2-2-大神解法" class="headerlink" title="2.2 大神解法:"></a>2.2 大神解法:</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public List&lt;List&lt;String&gt;&gt; groupAnagrams(String[] strs) &#123;</span><br><span class="line">        Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;String, List&lt;String&gt;&gt;();</span><br><span class="line">        for (String str : strs) &#123;</span><br><span class="line">            char[] array = str.toCharArray();</span><br><span class="line">            Arrays.sort(array);</span><br><span class="line">            String key = new String(array);</span><br><span class="line">            List&lt;String&gt; list = map.getOrDefault(key, new ArrayList&lt;String&gt;());</span><br><span class="line">            list.add(str);</span><br><span class="line">            map.put(key, list);</span><br><span class="line">        &#125;</span><br><span class="line">        return new ArrayList&lt;List&lt;String&gt;&gt;(map.values());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-反思"><a href="#2-3-反思" class="headerlink" title="2.3 反思:"></a>2.3 反思:</h4><p>本质是选好<code>key</code>与<code>value</code>.</p>
+<p>注意字符串与字符数组之间的相互转化.</p>
+<p>通过<code>getOrDefault</code>方法简化了处理逻辑, 但是菜鸟解法(本人)的更容易理解.</p>
+<h3 id="3-最长连续序列"><a href="#3-最长连续序列" class="headerlink" title="3. 最长连续序列"></a>3. 最长连续序列</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">题目: 给定一个未排序的整数数组 nums ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。</span><br><span class="line"></span><br><span class="line">请你设计并实现时间复杂度为 O(n) 的算法解决此问题。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">示例 1：</span><br><span class="line"></span><br><span class="line">输入：nums = [100,4,200,1,3,2]</span><br><span class="line">输出：4</span><br><span class="line">解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。</span><br><span class="line">示例 2：</span><br><span class="line"></span><br><span class="line">输入：nums = [0,3,7,2,5,8,4,6,0,1]</span><br><span class="line">输出：9</span><br><span class="line">示例 3：</span><br><span class="line"></span><br><span class="line">输入：nums = [1,0,1,2]</span><br><span class="line">输出：3</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-1-菜鸟解法"><a href="#3-1-菜鸟解法" class="headerlink" title="3.1 菜鸟解法:"></a>3.1 菜鸟解法:</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">longestConsecutive</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        <span class="type">int</span> result=<span class="number">0</span>;</span><br><span class="line">        Set&lt;Integer&gt; hashset = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;Integer&gt;();</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> num:nums)&#123;</span><br><span class="line">            hashset.add(num);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> num:hashset)&#123;</span><br><span class="line">        <span class="keyword">if</span>(!hashset.contains(num-<span class="number">1</span>))&#123;</span><br><span class="line">            <span class="type">int</span> first=num;</span><br><span class="line">            <span class="type">int</span> size=<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span>(hashset.contains(++first))&#123;</span><br><span class="line">                size++;</span><br><span class="line">            	&#125;</span><br><span class="line">            result=Math.max(result,size);</span><br><span class="line">        	&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-大神解法"><a href="#3-2-大神解法" class="headerlink" title="3.2 大神解法"></a>3.2 大神解法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">longestConsecutive</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        Set&lt;Integer&gt; num_set = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;Integer&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : nums) &#123;</span><br><span class="line">            num_set.add(num);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">longestStreak</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : num_set) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!num_set.contains(num - <span class="number">1</span>)) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">currentNum</span> <span class="operator">=</span> num;</span><br><span class="line">                <span class="type">int</span> <span class="variable">currentStreak</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">while</span> (num_set.contains(currentNum + <span class="number">1</span>)) &#123;</span><br><span class="line">                    currentNum += <span class="number">1</span>;</span><br><span class="line">                    currentStreak += <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                longestStreak = Math.max(longestStreak, currentStreak);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> longestStreak;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-反思"><a href="#3-3-反思" class="headerlink" title="3.3 反思"></a>3.3 反思</h4><p>此题通过了<code>Set</code>进行了去重.</p>
+<p>若集合包含<code>num-1</code>, 则该<code>num</code>不可能作为连续序列的第一个元素.</p>
+
+        </article>
+        <section class="post-near">
+            <ul>
+                
+                    <li>上一篇: 看完啦 (つд⊂)</li>
+                
+                
+                    <li>下一篇: <a href="/2025/07/12/AI%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/">AI基础知识学习</a></li>
+                
+            </ul>
+        </section>
+        
+            <section class="post-tags">
+            <a class="-none-link" href="/tags/Leetcode/" rel="tag">Leetcode</a>
+            </section>
+        
+    
+        <section class="post-author">
+        
+            <figure class="author-avatar">
+                <img src="https://sdn.geekzu.org/avatar/d22eb460ecab37fcd7205e6a3c55c228?s=200&r=X&d=" alt="hduer" />
+            </figure>
+        
+            <div class="author-info">
+                <h4>hduer</h4>
+                <p>一个热爱生活的hduer</p>
+            </div>
+        </section>
+    
+    </div>
+</main>
+
+    <footer>
+    <div class="buttons">
+        <button class="to-top" href="#"></button>
+    </div>
+    <div class="wrap min">
+        <section class="widget">
+            <div class="row">
+                <div class="col-m-4">
+                    <h3 class="title-recent">最新文章：</h3>
+                    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2025/07/19/leetcode-Day1/">leetcode-Day1</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/12/AI%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/">AI基础知识学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/11/RAG%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%AE%B9%E5%99%A8%E5%8C%96%E5%AE%9E%E8%B7%B5/">RAG智能问答系统容器化实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/08/transformer/">Transformer学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/05/docker/">docker学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/06/15/Dify%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Dify基础学习笔记</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-date">时光机：</h3>
+                    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-tags">标签云：</h3>
+                    <a href="/tags/Dify/" style="font-size: 10px;">Dify</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/docker/" style="font-size: 20px;">docker</a> <a href="/tags/prompt/" style="font-size: 10px;">prompt</a> <a href="/tags/%E5%BA%95%E5%B1%82%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">底层架构</a>
+                </div>
+            </div>
+        </section>
+        <section class="sub-footer">
+            <p>© 2025 <a href="/">Hduer</a>. All Rights Reserved. Theme By <a href="https://github.com/Dreamer-Paul/Hingle" target="_blank" rel="nofollow">Hingle</a>.</p>
+        </section>
+    </div>
+</footer>
+
+
+<script src="/static/kico.js"></script>
+<script src="/static/hingle.js"></script>
+
+
+<script>var hingle = new Paul_Hingle({"copyright":true,"night":true});</script>
+
+  </body>
+</html>
