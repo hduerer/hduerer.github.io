@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    
+    <meta charset="UTF-8">
+    <title>leetcode-Day4 - Hduer</title>
+    <link rel="shortcut icon" href="/static/img/icon.png">
+    <link rel="icon" href="/static/img/icon.png" sizes="192x192"/>
+    
+<link rel="stylesheet" href="/static/kico.css">
+<link rel="stylesheet" href="/static/hingle.css">
+
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:site_name" content="Hduer">
+    <meta property="og:title" content="leetcode-Day4"/>
+    
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+    <div class="head-title">
+        <h4>Hduer</h4>
+    </div>
+    <div class="head-action">
+        <div class="toggle-btn"></div>
+        <div class="light-btn"></div>
+        <div class="search-btn"></div>
+    </div>
+    <form class="head-search" method="post">
+        <input type="text" name="s" placeholder="搜索什么？">
+    </form>
+    <nav class="head-menu">
+        <a href="/">首页</a>
+        <div class="has-child">
+            <a href>分类</a>
+            <div class="sub-menu">
+                <a class="category-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="category-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a>
+            </div>
+        </div>
+        
+            <a href="/about">关于我</a>
+        
+            <a href="/friends">朋友们</a>
+        
+    </nav>
+</header>
+
+    <main>
+    <div class="wrap min">
+        <section class="post-title">
+            <h2>leetcode-Day4</h2>
+            <div class="post-meta">
+                <time class="date">2025.07.21</time>
+            
+            </div>
+        </section>
+        <article class="post-content">
+        
+            <h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><h3 id="1-最大子数组和"><a href="#1-最大子数组和" class="headerlink" title="1. 最大子数组和"></a>1. 最大子数组和</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">题目描述:</span><br><span class="line">给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。</span><br><span class="line"></span><br><span class="line">子数组是数组中的一个连续部分。</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">示例 <span class="number">1</span>：</span><br><span class="line"></span><br><span class="line">输入：nums = [-<span class="number">2</span>,<span class="number">1</span>,-<span class="number">3</span>,<span class="number">4</span>,-<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>,-<span class="number">5</span>,<span class="number">4</span>]</span><br><span class="line">输出：<span class="number">6</span></span><br><span class="line">解释：连续子数组 [<span class="number">4</span>,-<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>] 的和最大，为 <span class="number">6</span> 。</span><br><span class="line">示例 <span class="number">2</span>：</span><br><span class="line"></span><br><span class="line">输入：nums = [<span class="number">1</span>]</span><br><span class="line">输出：<span class="number">1</span></span><br><span class="line">示例 <span class="number">3</span>：</span><br><span class="line"></span><br><span class="line">输入：nums = [<span class="number">5</span>,<span class="number">4</span>,-<span class="number">1</span>,<span class="number">7</span>,<span class="number">8</span>]</span><br><span class="line">输出：<span class="number">23</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-1-菜鸟解法-超时"><a href="#1-1-菜鸟解法-超时" class="headerlink" title="1.1 菜鸟解法: 超时!"></a>1.1 菜鸟解法: 超时!</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">maxSubArray</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">ans</span> <span class="operator">=</span> nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;            </span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> j=i;j&lt;nums.length;j++)&#123;                </span><br><span class="line">                sum += nums[j];</span><br><span class="line">                ans = Math.max(sum,ans);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-大神解法"><a href="#1-2-大神解法" class="headerlink" title="1.2 大神解法"></a>1.2 大神解法</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int maxSubArray(int[] nums) &#123;</span><br><span class="line">        int pre = 0, maxAns = nums[0];</span><br><span class="line">        for (int x : nums) &#123;</span><br><span class="line">            pre = Math.max(pre + x, x);</span><br><span class="line">            maxAns = Math.max(maxAns, pre);</span><br><span class="line">        &#125;</span><br><span class="line">        return maxAns;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-反思"><a href="#1-3-反思" class="headerlink" title="1.3 反思"></a>1.3 反思</h4><table>
+<thead>
+<tr>
+<th>比较点</th>
+<th>算法一（暴力）</th>
+<th>算法二（Kadane）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>效率</strong></td>
+<td>慢，O(n²)</td>
+<td>快，O(n)</td>
+</tr>
+<tr>
+<td><strong>空间</strong></td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><strong>适用性</strong></td>
+<td>小数据量、教学用途</td>
+<td>大数据量、面试&#x2F;实战</td>
+</tr>
+<tr>
+<td><strong>可读性</strong></td>
+<td>简单</td>
+<td>较简洁，稍难理解</td>
+</tr>
+<tr>
+<td><strong>优化建议</strong></td>
+<td>应用前缀和或DP优化</td>
+<td>可加注释增强理解</td>
+</tr>
+</tbody></table>
+<h3 id="2-合并区间"><a href="#2-合并区间" class="headerlink" title="2. 合并区间"></a>2. 合并区间</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">题目描述:</span><br><span class="line">以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。</span><br><span class="line"></span><br><span class="line">示例 <span class="number">1</span>：</span><br><span class="line"></span><br><span class="line">输入：intervals = [[<span class="number">1</span>,<span class="number">3</span>],[<span class="number">2</span>,<span class="number">6</span>],[<span class="number">8</span>,<span class="number">10</span>],[<span class="number">15</span>,<span class="number">18</span>]]</span><br><span class="line">输出：[[<span class="number">1</span>,<span class="number">6</span>],[<span class="number">8</span>,<span class="number">10</span>],[<span class="number">15</span>,<span class="number">18</span>]]</span><br><span class="line">解释：区间 [<span class="number">1</span>,<span class="number">3</span>] 和 [<span class="number">2</span>,<span class="number">6</span>] 重叠, 将它们合并为 [<span class="number">1</span>,<span class="number">6</span>].</span><br><span class="line">示例 <span class="number">2</span>：</span><br><span class="line"></span><br><span class="line">输入：intervals = [[<span class="number">1</span>,<span class="number">4</span>],[<span class="number">4</span>,<span class="number">5</span>]]</span><br><span class="line">输出：[[<span class="number">1</span>,<span class="number">5</span>]]</span><br><span class="line">解释：区间 [<span class="number">1</span>,<span class="number">4</span>] 和 [<span class="number">4</span>,<span class="number">5</span>] 可被视为重叠区间。</span><br></pre></td></tr></table></figure>
+
+<h4 id="大神解法"><a href="#大神解法" class="headerlink" title="大神解法"></a>大神解法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[][] merge(<span class="type">int</span>[][] intervals) &#123;</span><br><span class="line">        <span class="keyword">if</span> (intervals.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>][<span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        Arrays.sort(intervals, <span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;<span class="type">int</span>[]&gt;() &#123;</span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(<span class="type">int</span>[] interval1, <span class="type">int</span>[] interval2)</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> interval1[<span class="number">0</span>] - interval2[<span class="number">0</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        List&lt;<span class="type">int</span>[]&gt; merged = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;<span class="type">int</span>[]&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; intervals.length; ++i) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">L</span> <span class="operator">=</span> intervals[i][<span class="number">0</span>], R = intervals[i][<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">if</span> (merged.size() == <span class="number">0</span> || merged.get(merged.size() - <span class="number">1</span>)[<span class="number">1</span>] &lt; L) &#123;</span><br><span class="line">                merged.add(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;L, R&#125;);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                merged.get(merged.size() - <span class="number">1</span>)[<span class="number">1</span>] = Math.max(merged.get(merged.size() - <span class="number">1</span>)[<span class="number">1</span>], R);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> merged.toArray(<span class="keyword">new</span> <span class="title class_">int</span>[merged.size()][]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-轮转数组"><a href="#3-轮转数组" class="headerlink" title="3. 轮转数组"></a>3. 轮转数组</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">题目描述:</span><br><span class="line">给定一个整数数组 nums，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。</span><br><span class="line"></span><br><span class="line">示例 <span class="number">1</span>:</span><br><span class="line"></span><br><span class="line">输入: nums = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>], k = <span class="number">3</span></span><br><span class="line">输出: [<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line">解释:</span><br><span class="line">向右轮转 <span class="number">1</span> 步: [<span class="number">7</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]</span><br><span class="line">向右轮转 <span class="number">2</span> 步: [<span class="number">6</span>,<span class="number">7</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">向右轮转 <span class="number">3</span> 步: [<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line">示例 <span class="number">2</span>:</span><br><span class="line"></span><br><span class="line">输入：nums = [-<span class="number">1</span>,-<span class="number">100</span>,<span class="number">3</span>,<span class="number">99</span>], k = <span class="number">2</span></span><br><span class="line">输出：[<span class="number">3</span>,<span class="number">99</span>,-<span class="number">1</span>,-<span class="number">100</span>]</span><br><span class="line">解释: </span><br><span class="line">向右轮转 <span class="number">1</span> 步: [<span class="number">99</span>,-<span class="number">1</span>,-<span class="number">100</span>,<span class="number">3</span>]</span><br><span class="line">向右轮转 <span class="number">2</span> 步: [<span class="number">3</span>,<span class="number">99</span>,-<span class="number">1</span>,-<span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-1-菜鸟解法"><a href="#3-1-菜鸟解法" class="headerlink" title="3.1 菜鸟解法 :"></a>3.1 菜鸟解法 :</h4><p> 利用循环队列的思想 :</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">rotate</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] nums_copy = Arrays.copyOf(nums,nums.length);</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            nums[(i+k)%nums.length] = nums_copy[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-大神解法"><a href="#3-2-大神解法" class="headerlink" title="3.2 大神解法"></a>3.2 大神解法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">rotate</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> nums.length;</span><br><span class="line">        k = k % n;</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> gcd(k, n);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">start</span> <span class="operator">=</span> <span class="number">0</span>; start &lt; count; ++start) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">current</span> <span class="operator">=</span> start;</span><br><span class="line">            <span class="type">int</span> <span class="variable">prev</span> <span class="operator">=</span> nums[start];</span><br><span class="line">            <span class="keyword">do</span> &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">next</span> <span class="operator">=</span> (current + k) % n;</span><br><span class="line">                <span class="type">int</span> <span class="variable">temp</span> <span class="operator">=</span> nums[next];</span><br><span class="line">                nums[next] = prev;</span><br><span class="line">                prev = temp;</span><br><span class="line">                current = next;</span><br><span class="line">            &#125; <span class="keyword">while</span> (start != current);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">gcd</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> y &gt; <span class="number">0</span> ? gcd(y, x % y) : x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-反思"><a href="#3-3-反思" class="headerlink" title="3.3 反思"></a>3.3 反思</h4><p>循环队列的思想很容易理解, 主要的开销在于要使用了一个额外的数组防止元素被覆盖</p>
+<table>
+<thead>
+<tr>
+<th>比较维度</th>
+<th>算法一：使用额外数组</th>
+<th>算法二：原地旋转（基于环状替换）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>时间复杂度</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>空间复杂度</td>
+<td>O(n)</td>
+<td><strong>O(1)</strong>（<strong>原地操作</strong>）</td>
+</tr>
+<tr>
+<td>实现难度</td>
+<td>简单，容易理解</td>
+<td>中等偏难，需理解数组轮换的数学性质</td>
+</tr>
+<tr>
+<td>可读性</td>
+<td>高</td>
+<td>中等（环替换逻辑略复杂）</td>
+</tr>
+<tr>
+<td>是否修改原数组</td>
+<td>是（直接修改 <code>nums</code>）</td>
+<td>是（<strong>原地完成</strong>，不借助额外结构）</td>
+</tr>
+</tbody></table>
+<h3 id="4-除自身以外数组的乘积"><a href="#4-除自身以外数组的乘积" class="headerlink" title="4. 除自身以外数组的乘积"></a>4. 除自身以外数组的乘积</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">题目描述:</span><br><span class="line">给你一个整数数组 nums，返回 数组 answer ，其中 answer[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积 。</span><br><span class="line"></span><br><span class="line">题目数据 保证 数组 nums之中任意元素的全部前缀元素和后缀的乘积都在  32 位 整数范围内。</span><br><span class="line"></span><br><span class="line">请 不要使用除法，且在 O(n) 时间复杂度内完成此题。</span><br><span class="line"></span><br><span class="line">示例 1:</span><br><span class="line"></span><br><span class="line">输入: nums = [1,2,3,4]</span><br><span class="line">输出: [24,12,8,6]</span><br><span class="line">示例 2:</span><br><span class="line"></span><br><span class="line">输入: nums = [-1,1,0,-3,3]</span><br><span class="line">输出: [0,0,9,0,0]</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-1-菜鸟解法"><a href="#4-1-菜鸟解法" class="headerlink" title="4.1 菜鸟解法"></a>4.1 菜鸟解法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] productExceptSelf(<span class="type">int</span>[] nums) &#123;</span><br><span class="line">        <span class="type">int</span>[] result = <span class="keyword">new</span> <span class="title class_">int</span>[nums.length];</span><br><span class="line">        <span class="type">int</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">total1</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">total2</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            total1 *= nums[i];</span><br><span class="line">            <span class="keyword">if</span>(nums[i]!=<span class="number">0</span>) total2 *= nums[i];</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                flag++;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (flag&gt;=<span class="number">2</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            	result[i] = <span class="number">0</span>;</span><br><span class="line">        	&#125;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            	<span class="keyword">if</span>(nums[i]!=<span class="number">0</span>) result[i] = total1/nums[i];</span><br><span class="line">            	<span class="keyword">else</span> result[i] = total2;</span><br><span class="line">        	&#125;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-2-大神解法"><a href="#4-2-大神解法" class="headerlink" title="4.2 大神解法"></a>4.2 大神解法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[] productExceptSelf(<span class="type">int</span>[] nums) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> nums.length;</span><br><span class="line">        <span class="type">int</span>[] answer = <span class="keyword">new</span> <span class="title class_">int</span>[length];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// answer[i] 表示索引 i 左侧所有元素的乘积</span></span><br><span class="line">        <span class="comment">// 因为索引为 &#x27;0&#x27; 的元素左侧没有元素， 所以 answer[0] = 1</span></span><br><span class="line">        answer[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; length; i++) &#123;</span><br><span class="line">            answer[i] = nums[i - <span class="number">1</span>] * answer[i - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// R 为右侧所有元素的乘积</span></span><br><span class="line">        <span class="comment">// 刚开始右边没有元素，所以 R = 1</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">R</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="comment">// 对于索引 i，左边的乘积为 answer[i]，右边的乘积为 R</span></span><br><span class="line">            answer[i] = answer[i] * R;</span><br><span class="line">            <span class="comment">// R 需要包含右边所有的乘积，所以计算下一个结果时需要将当前值乘到 R 上</span></span><br><span class="line">            R *= nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> answer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-3-反思"><a href="#4-3-反思" class="headerlink" title="4.3 反思"></a>4.3 反思</h4><table>
+<thead>
+<tr>
+<th>比较维度</th>
+<th>算法一：使用除法（处理 0 特判）</th>
+<th>算法二：前缀积 + 后缀积（推荐做法）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>是否使用除法</td>
+<td>使用除法并特殊处理 0</td>
+<td>不使用除法</td>
+</tr>
+<tr>
+<td>时间复杂度</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>空间复杂度</td>
+<td>O(1)（不含返回数组）</td>
+<td>O(1)（使用返回数组作存储空间）</td>
+</tr>
+<tr>
+<td>可读性</td>
+<td>中等，0 的处理逻辑较绕</td>
+<td>高，结构清晰，逻辑直观</td>
+</tr>
+<tr>
+<td>是否符合题目限制</td>
+<td>不符合（使用了除法）</td>
+<td>完全符合</td>
+</tr>
+</tbody></table>
+
+        </article>
+        <section class="post-near">
+            <ul>
+                
+                    <li>上一篇: 看完啦 (つд⊂)</li>
+                
+                
+                    <li>下一篇: <a href="/2025/07/21/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E5%8E%8B%E7%BC%A9%E4%B8%8E%E9%83%A8%E7%BD%B2/">大模型微调压缩与部署</a></li>
+                
+            </ul>
+        </section>
+        
+            <section class="post-tags">
+            <a class="-none-link" href="/tags/LeetCode/" rel="tag">LeetCode</a>
+            </section>
+        
+    
+        <section class="post-author">
+        
+            <figure class="author-avatar">
+                <img src="https://sdn.geekzu.org/avatar/d22eb460ecab37fcd7205e6a3c55c228?s=200&r=X&d=" alt="hduer" />
+            </figure>
+        
+            <div class="author-info">
+                <h4>hduer</h4>
+                <p>一个热爱生活的hduer</p>
+            </div>
+        </section>
+    
+    </div>
+</main>
+
+    <footer>
+    <div class="buttons">
+        <button class="to-top" href="#"></button>
+    </div>
+    <div class="wrap min">
+        <section class="widget">
+            <div class="row">
+                <div class="col-m-4">
+                    <h3 class="title-recent">最新文章：</h3>
+                    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2025/07/21/leetcode-Day4/">leetcode-Day4</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/21/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E5%8E%8B%E7%BC%A9%E4%B8%8E%E9%83%A8%E7%BD%B2/">大模型微调压缩与部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/21/leetcode-Day3/">leetcode-Day3</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/20/leetcode-Day2/">leetcode-Day2</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/19/leetcode-Day1/">leetcode-Day1</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/11/RAG%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%AE%B9%E5%99%A8%E5%8C%96%E5%AE%9E%E8%B7%B5/">RAG智能问答系统容器化实践</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-date">时光机：</h3>
+                    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-tags">标签云：</h3>
+                    <a href="/tags/Dify/" style="font-size: 10px;">Dify</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/prompt/" style="font-size: 10px;">prompt</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">大模型</a> <a href="/tags/%E5%BA%95%E5%B1%82%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">底层架构</a>
+                </div>
+            </div>
+        </section>
+        <section class="sub-footer">
+            <p>© 2025 <a href="/">Hduer</a>. All Rights Reserved. Theme By <a href="https://github.com/Dreamer-Paul/Hingle" target="_blank" rel="nofollow">Hingle</a>.</p>
+        </section>
+    </div>
+</footer>
+
+
+<script src="/static/kico.js"></script>
+<script src="/static/hingle.js"></script>
+
+
+<script>var hingle = new Paul_Hingle({"copyright":true,"night":true});</script>
+
+  </body>
+</html>
