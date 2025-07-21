@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    
+    <meta charset="UTF-8">
+    <title>大模型微调压缩与部署 - Hduer</title>
+    <link rel="shortcut icon" href="/static/img/icon.png">
+    <link rel="icon" href="/static/img/icon.png" sizes="192x192"/>
+    
+<link rel="stylesheet" href="/static/kico.css">
+<link rel="stylesheet" href="/static/hingle.css">
+
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:site_name" content="Hduer">
+    <meta property="og:title" content="大模型微调压缩与部署"/>
+    
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+    <div class="head-title">
+        <h4>Hduer</h4>
+    </div>
+    <div class="head-action">
+        <div class="toggle-btn"></div>
+        <div class="light-btn"></div>
+        <div class="search-btn"></div>
+    </div>
+    <form class="head-search" method="post">
+        <input type="text" name="s" placeholder="搜索什么？">
+    </form>
+    <nav class="head-menu">
+        <a href="/">首页</a>
+        <div class="has-child">
+            <a href>分类</a>
+            <div class="sub-menu">
+                <a class="category-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="category-link" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a>
+            </div>
+        </div>
+        
+            <a href="/about">关于我</a>
+        
+            <a href="/friends">朋友们</a>
+        
+    </nav>
+</header>
+
+    <main>
+    <div class="wrap min">
+        <section class="post-title">
+            <h2>大模型微调压缩与部署</h2>
+            <div class="post-meta">
+                <time class="date">2025.07.21</time>
+            
+            </div>
+        </section>
+        <article class="post-content">
+        
+            <h2 id="一-模型的预训练"><a href="#一-模型的预训练" class="headerlink" title="一. 模型的预训练"></a>一. 模型的预训练</h2><h3 id="1-模型的训练过程"><a href="#1-模型的训练过程" class="headerlink" title="1. 模型的训练过程"></a>1. 模型的训练过程</h3><p>预训练-&gt; 指令微调 -&gt; 奖励模型的建立 -&gt; 强化学习与人类反馈对齐</p>
+<p><img src="/images%5Cimage-20250721162919084.png" alt="image-20250721162919084"></p>
+<h3 id="2-什么是预训练"><a href="#2-什么是预训练" class="headerlink" title="2. 什么是预训练"></a>2. 什么是预训练</h3><p>预训练是指在模型正式执行下游任务（如分类、问答、翻译等）之前，先在一个大规模通用数据集上进行的训练过程。本质上是一种“先学习通用知识，再微调到具体任务”的思路。</p>
+<p>如预训练模型（如BERT、GPT、ResNet）通过<strong>大规模无监督预训练</strong>先学得通用特征，再微调具体任务。此时模型已具备“常识”，只需少量标注数据调整即可。</p>
+<h3 id="3-预训练过程"><a href="#3-预训练过程" class="headerlink" title="3. 预训练过程"></a>3. 预训练过程</h3><h4 id="3-1-数据准备与清洗"><a href="#3-1-数据准备与清洗" class="headerlink" title="3.1 数据准备与清洗"></a>3.1 数据准备与清洗</h4><ul>
+<li><p><strong>数据收集</strong>：获取大规模、多样化的文本数据（如网页、书籍、论文、代码等），确保覆盖广泛领域。</p>
+</li>
+<li><p><strong>数据清洗</strong>：</p>
+<ul>
+<li><p>去重、过滤低质量内容（如垃圾文本、重复模板）。</p>
+</li>
+<li><p>敏感内容过滤（隐私、暴力、偏见等）。</p>
+</li>
+<li><p>统一编码（UTF-8）、标准化格式（如全角转半角）。</p>
+</li>
+<li><p><strong>技术细节：</strong></p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>处理阶段</th>
+<th>技术细节</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>文档级过滤</strong></td>
+<td>使用LSH（局部敏感哈希）去重，保留高质量长文档（&gt;512 tokens）</td>
+</tr>
+<tr>
+<td><strong>质量评分</strong></td>
+<td>训练轻量级分类器（如FastText）对文本进行0-5分质量打分，过滤低分数据</td>
+</tr>
+<tr>
+<td><strong>毒性检测</strong></td>
+<td>集成Detoxify等工具检测hate&#x2F;threat内容，需平衡过度过滤导致的方言损失</td>
+</tr>
+<tr>
+<td><strong>代码数据</strong></td>
+<td>使用AST解析过滤语法错误代码，保留带注释的GitHub高星项目</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p>如去重:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">dedup_hash</span>(<span class="params">example</span>):</span><br><span class="line">    <span class="comment"># 计算文本字段的 MD5 哈希值，并转成 32 位十六进制字符串</span></span><br><span class="line">    h = hashlib.md5(example[<span class="string">&quot;text&quot;</span>].encode()).hexdigest()</span><br><span class="line">    <span class="comment"># 如果该哈希值已经在集合 seen 中，说明文本重复</span></span><br><span class="line">    <span class="keyword">if</span> h <span class="keyword">in</span> seen:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span>          <span class="comment"># 过滤掉这条重复样本</span></span><br><span class="line">    <span class="comment"># 将新哈希值加入集合，标记已出现过</span></span><br><span class="line">    seen.add(h)</span><br><span class="line">    <span class="comment"># 保留这条样本</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-分词"><a href="#3-2-分词" class="headerlink" title="3.2 分词"></a>3.2 分词</h4><p>使用子词算法（如BPE、WordPiece、SentencePiece）将文本切分为子词（Subword）或词元（Token），平衡词汇量和未登录词（OOV）问题。</p>
+<p>如<strong>训练并加载一个 SentencePiece 分词器</strong>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">spm.SentencePieceTrainer.train(</span><br><span class="line">    <span class="built_in">input</span>=<span class="string">&quot;clean.txt&quot;</span>,                    <span class="comment"># 指定训练语料文件路径</span></span><br><span class="line">    model_prefix=<span class="string">&quot;tok&quot;</span>,                   <span class="comment"># 输出的模型文件名前缀，将生成 tok.model 和 tok.vocab</span></span><br><span class="line">    vocab_size=<span class="number">32000</span>,                     <span class="comment"># 目标词表大小（BPE 合并次数 + 特殊符号）</span></span><br><span class="line">    model_type=<span class="string">&quot;bpe&quot;</span>,                     <span class="comment"># 使用 Byte-Pair Encoding 子词算法</span></span><br><span class="line">    character_coverage=<span class="number">0.9995</span>,            <span class="comment"># 覆盖语料中 99.95% 的字符，保留罕见字符为 &lt;unk&gt;</span></span><br><span class="line">    split_digits=<span class="literal">True</span>,                    <span class="comment"># 把连续数字拆成单独的数字片段，减少 OOV</span></span><br><span class="line">    allow_whitespace_only_pieces=<span class="literal">True</span>,    <span class="comment"># 允许仅由空格组成的子词（如多个空格）</span></span><br><span class="line">    remove_extra_whitespaces=<span class="literal">True</span>,        <span class="comment"># 预处理时删除多余空白字符</span></span><br><span class="line">    max_sentence_length=<span class="number">16384</span>)            <span class="comment"># 单句最大长度，超长句子将被截断</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载刚才训练好的 SentencePiece 模型，用于后续编码/解码</span></span><br><span class="line">tok = spm.SentencePieceProcessor(model_file=<span class="string">&quot;tok.model&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-3-选择基础架构"><a href="#3-3-选择基础架构" class="headerlink" title="3.3 选择基础架构"></a>3.3 选择基础架构</h4><p>选择基础架构：</p>
+<ul>
+<li><strong>Decoder-Only</strong>（如GPT）：适用于自回归语言建模（逐词生成）。</li>
+<li><strong>Encoder-Only</strong>（如BERT）：适用于理解任务（如掩码语言建模）。</li>
+<li><strong>Encoder-Decoder</strong>（如T5）：适用于序列到序列任务。</li>
+</ul>
+<p>![mermaid (2)](D:\Microsoft download\mermaid (2).png)</p>
+<h4 id="3-4-初始化参数"><a href="#3-4-初始化参数" class="headerlink" title="3.4 初始化参数"></a>3.4 初始化参数</h4><p>在预训练阶段，<strong>初始化参数</strong>可以分为两大类：</p>
+<ul>
+<li><strong>模型结构参数（Model Architecture）</strong></li>
+<li><strong>训练超参数（Training Hyperparameters）</strong></li>
+</ul>
+<p>模型结构参数: 这些参数定义了模型的网络结构，<strong>一旦设定，训练时不再改动</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>说明</th>
+<th>典型值（如 Llama-3-8B）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>hidden_size</code></td>
+<td>隐藏层维度（即模型宽度）</td>
+<td>4096</td>
+</tr>
+<tr>
+<td><code>num_attention_heads</code></td>
+<td>注意力头数</td>
+<td>32</td>
+</tr>
+<tr>
+<td><code>num_key_value_heads</code></td>
+<td>GQA 的 KV 头数（减少显存）</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>num_hidden_layers</code></td>
+<td>Transformer 层数（模型深度）</td>
+<td>32</td>
+</tr>
+<tr>
+<td><code>intermediate_size</code></td>
+<td>FFN 的中间维度（通常 &#x3D; 4 × hidden_size）</td>
+<td>11008</td>
+</tr>
+<tr>
+<td><code>max_position_embeddings</code></td>
+<td>最大序列长度（RoPE 支持更长）</td>
+<td>8192</td>
+</tr>
+<tr>
+<td><code>vocab_size</code></td>
+<td>词表大小（BPE&#x2F;BBPE 分词器）</td>
+<td>128256</td>
+</tr>
+<tr>
+<td><code>rms_norm_eps</code></td>
+<td>RMSNorm 的 ε（防止除零）</td>
+<td>1e-5</td>
+</tr>
+</tbody></table>
+<p>如可进行以下配置:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">config = GPT2Config(              <span class="comment"># 创建 GPT-2 模型配置对象</span></span><br><span class="line">    vocab_size=<span class="number">32000</span>,             <span class="comment"># 词表大小，与 SentencePiece 训练时保持一致（32k）</span></span><br><span class="line">    n_positions=<span class="number">1024</span>,             <span class="comment"># 最大序列长度（位置编码个数），最长支持 1024 个 token</span></span><br><span class="line">    n_embd=<span class="number">768</span>,                   <span class="comment"># 词向量/隐藏层维度，每个 token 被映射为 768 维向量</span></span><br><span class="line">    n_layer=<span class="number">12</span>,                   <span class="comment"># Transformer 解码器层数，共 12 层</span></span><br><span class="line">    n_head=<span class="number">12</span>,                    <span class="comment"># 每层多头注意力中的头数，12 个并行注意力头</span></span><br><span class="line">    activation_function=<span class="string">&quot;gelu&quot;</span>    <span class="comment"># 前馈网络使用的激活函数，选用 GELU 替代 ReLU</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>训练超参数: 这些参数控制训练过程，<strong>可以在训练中调整</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>说明</th>
+<th>典型值（Llama-3-8B 预训练）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>learning_rate</code></td>
+<td>初始学习率</td>
+<td>3e-4（Cosine 衰减）</td>
+</tr>
+<tr>
+<td><code>batch_size</code></td>
+<td>全局批次大小（tokens）</td>
+<td>4M tokens（≈ 4000 × 1K seq_len）</td>
+</tr>
+<tr>
+<td><code>optimizer</code></td>
+<td>优化器</td>
+<td>AdamW（β1&#x3D;0.9, β2&#x3D;0.95）</td>
+</tr>
+<tr>
+<td><code>weight_decay</code></td>
+<td>权重衰减（L2 正则化）</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td><code>gradient_clipping</code></td>
+<td>梯度裁剪阈值</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td><code>warmup_steps</code></td>
+<td>学习率预热步数</td>
+<td>2000</td>
+</tr>
+<tr>
+<td><code>lr_scheduler_type</code></td>
+<td>学习率调度器</td>
+<td>Cosine</td>
+</tr>
+<tr>
+<td><code>precision</code></td>
+<td>计算精度（FP16&#x2F;BF16）</td>
+<td>BF16（更稳定）</td>
+</tr>
+<tr>
+<td><code>activation_checkpointing</code></td>
+<td>是否启用重计算（节省显存）</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>data_seed</code></td>
+<td>数据加载随机种子</td>
+<td>42</td>
+</tr>
+</tbody></table>
+<p>如可进行以下配置:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">training_args = TrainingArguments(</span><br><span class="line">    output_dir=<span class="string">&quot;./gpt2-c4&quot;</span>,              <span class="comment"># 训练过程中所有输出（模型、日志、检查点）的保存路径</span></span><br><span class="line">    per_device_train_batch_size=<span class="number">8</span>,       <span class="comment"># 每张 GPU 上的训练批次大小（8×4=32 实际全局批次）</span></span><br><span class="line">    gradient_accumulation_steps=<span class="number">4</span>,       <span class="comment"># 每 4 个小步累积一次梯度，再执行一次参数更新</span></span><br><span class="line">    num_train_epochs=<span class="number">1</span>,                  <span class="comment"># 在整个训练集上完整迭代的轮数（这里只跑 1 个 epoch）</span></span><br><span class="line">    learning_rate=<span class="number">5e-4</span>,                  <span class="comment"># 初始学习率（较大，适合从零训练）</span></span><br><span class="line">    warmup_steps=<span class="number">1000</span>,                   <span class="comment"># 前 1000 步内学习率从 0 线性升温到 5e-4</span></span><br><span class="line">    lr_scheduler_type=<span class="string">&quot;cosine&quot;</span>,          <span class="comment"># 预热后使用余弦退火学习率调度</span></span><br><span class="line">    bf16=<span class="literal">True</span>,                           <span class="comment"># 启用 bfloat16 混合精度训练，节省显存并加速（需 Ampere 架构及以上 GPU）</span></span><br><span class="line">    dataloader_pin_memory=<span class="literal">False</span>,         <span class="comment"># 关闭 dataloader 的 pin_memory，避免某些平台 OOM 或加速不明显</span></span><br><span class="line">    deepspeed=<span class="string">&quot;ds_config_zero3.json&quot;</span>     <span class="comment"># 指定 DeepSpeed 配置文件路径，启用 ZeRO-3 优化器/参数分片</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-5-开始训练"><a href="#3-5-开始训练" class="headerlink" title="3.5 开始训练"></a>3.5 开始训练</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建 Trainer 对象，封装模型、训练参数、数据集等训练所需全部组件</span></span><br><span class="line">trainer = Trainer(</span><br><span class="line">    model=model,               <span class="comment"># 待训练的 GPT-2 模型实例</span></span><br><span class="line">    args=training_args,        <span class="comment"># 之前定义的 TrainingArguments 超参数配置</span></span><br><span class="line">    train_dataset=tokenized,   <span class="comment"># 已经分词、编码并划分好批次的训练数据集</span></span><br><span class="line">    data_collator=data_collator<span class="comment"># 自定义或默认的 collate 函数，负责把一批样本整理成张量</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正式启动训练循环：前向、反向、梯度累积、参数更新、日志记录、模型保存</span></span><br><span class="line">trainer.train()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="二-模型微调"><a href="#二-模型微调" class="headerlink" title="二. 模型微调"></a>二. 模型微调</h2><h3 id="1-什么是模型微调"><a href="#1-什么是模型微调" class="headerlink" title="1. 什么是模型微调"></a>1. 什么是模型微调</h3><p>在深度学习里，我们通常先用海量通用语料预训练一个“大模型”（如 BERT、LLaMA等），让它具备广泛的语言或视觉理解能力。</p>
+<p>**模型微调（Fine-tuning)**就是在预训练权重的基础上，用小规模但任务相关的数据继续训练，使模型在特定任务或领域上表现更好。</p>
+<h3 id="2-为什么需要微调"><a href="#2-为什么需要微调" class="headerlink" title="2. 为什么需要微调?"></a>2. 为什么需要微调?</h3><ul>
+<li>预训练模型已学到通用特征，从头训练成本高。</li>
+<li>目标任务数据少，直接训练会过拟合。</li>
+<li>微调只需较少算力和数据即可达到或超越全量训练的效果。</li>
+</ul>
+<h3 id="3-模型微调方式分类"><a href="#3-模型微调方式分类" class="headerlink" title="3. 模型微调方式分类"></a>3. 模型微调方式分类</h3><h4 id="1-全参数微调"><a href="#1-全参数微调" class="headerlink" title="1. 全参数微调"></a><strong>1. 全参数微调</strong></h4><ul>
+<li><strong>方式</strong>：更新预训练模型的所有参数。</li>
+<li><strong>适用场景</strong>：目标任务与预训练任务差异较大，或数据量充足（如百万级样本）。</li>
+<li><strong>优点</strong>：灵活性强，能深度适配新任务。</li>
+<li><strong>缺点</strong>：计算成本高（需存储梯度、优化器状态），可能过拟合（小数据集时）。</li>
+</ul>
+<h4 id="2-参数高效微调"><a href="#2-参数高效微调" class="headerlink" title="2. 参数高效微调"></a>2. 参数高效微调</h4><p>通过少量参数调整实现高效迁移，适合资源受限或低数据场景。</p>
+<h5 id="2-1-LoRA"><a href="#2-1-LoRA" class="headerlink" title="2.1 LoRA"></a>2.1 <strong>LoRA</strong></h5><p><strong>LoRA</strong>（Low-Rank Adaptation，低秩适配器）是目前非常热门的大模型微调技术之一.</p>
+<p><strong>(1) 基本原理:</strong> </p>
+<p>对于输入 x，模型的输出 h  为：<img src="/images/image-20250721200921256.png" alt="image-20250721200921256"></p>
+<p>其中，ΔW表示在微调过程中新增的可学习部分，它被拆分为两个低秩矩阵 <code>B</code> 和 <code>A</code> 的乘积。.</p>
+<p>举个例子ΔW为<code>100*100</code>的矩阵, 则B可以为<code>100*k</code>的矩阵, A可以为<code>k*100</code>的矩阵,这样，ΔW&#x3D;BA的总参数量为 2×100×k，远小于原始的 100×100，大大减少了可训练参数数量，实现了高效微调。.</p>
+<p><strong>(2) 优点</strong></p>
+<p>显存占用极低（如LLaMA-7B的LoRA仅需几十MB），效果接近全参数微调。</p>
+<h5 id="2-2-QLoRA"><a href="#2-2-QLoRA" class="headerlink" title="2.2 QLoRA"></a><strong>2.2 QLoRA</strong></h5><p><strong>QLoRA (Quantized Low-Rank Adapter)</strong>: 是一种结合量化（Quantization）和低秩适配器（LoRA）的技术。</p>
+<p>(1) 基本原理</p>
+<p> <strong>QLoRA &#x3D; LoRA + 量化</strong>, 其主要是将原始模型的权重从 FP16 或 FP32 精度<strong>量化为 4-bit</strong>整数，但保留计算中的浮点表示。具体<strong>量化</strong>可参考后文。</p>
+<p>(2) 优点</p>
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>显存占用极低</td>
+<td>用单张 24GB 显存可微调 65B 参数模型（如 LLaMA）</td>
+</tr>
+<tr>
+<td>成本低</td>
+<td>适合中小团队在消费级显卡上训练</td>
+</tr>
+<tr>
+<td>效果好</td>
+<td>经过微调的 QLoRA 模型性能接近全量微调</td>
+</tr>
+<tr>
+<td>可复用性强</td>
+<td>LoRA 模块可以插拔，易于部署和管理</td>
+</tr>
+</tbody></table>
+<h4 id="3-分层微调"><a href="#3-分层微调" class="headerlink" title="3. 分层微调"></a><strong>3. 分层微调</strong></h4><ul>
+<li><strong>方式</strong>：仅微调模型的部分层（如顶层或底层），冻结其他层。</li>
+<li><strong>策略</strong>：<ul>
+<li><strong>逐层解冻</strong>：从顶层开始逐步解冻（如BERT先微调<code>pooler</code>层，再逐步放开）。</li>
+<li><strong>任务导向</strong>：NLP任务常微调顶层，CV任务可能微调底层（如ResNet的前几层）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-混合微调"><a href="#4-混合微调" class="headerlink" title="4. 混合微调"></a><strong>4. 混合微调</strong></h4><ul>
+<li><strong>方式</strong>：结合多种微调策略，例如：<ul>
+<li><strong>LoRA + 全参数微调</strong>：先用LoRA快速收敛，再解冻部分关键层精细调整。</li>
+<li><strong>多任务微调</strong>：共享底层参数，任务特定层使用Adapter。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-LlamaFactory"><a href="#4-LlamaFactory" class="headerlink" title="4. LlamaFactory"></a>4. LlamaFactory</h3><p><strong>LLaMAFactory</strong> 是一个基于 Hugging Face Transformers 和 PEFT 构建的开源微调框架，用于对 大模型 进行 <strong>QLoRA 微调</strong>、<strong>LoRA 微调</strong>、<strong>全参数微调</strong> 等。</p>
+<p>仓库地址 : <a target="_blank" rel="noopener" href="https://github.com/hiyouga/LLaMA-Factory.git">https://github.com/hiyouga/LLaMA-Factory.git</a></p>
+<h2 id="三-计算机硬件与模型训练"><a href="#三-计算机硬件与模型训练" class="headerlink" title="三. 计算机硬件与模型训练"></a>三. 计算机硬件与模型训练</h2><h3 id="1-硬件分类"><a href="#1-硬件分类" class="headerlink" title="1. 硬件分类"></a>1. 硬件分类</h3><p>英伟达官网: <a target="_blank" rel="noopener" href="https://www.nvidia.cn/">人工智能计算领域的领导者 | NVIDIA</a></p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>CPU</th>
+<th>GPU</th>
+<th>TPU</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心数量</td>
+<td>少（4～16）</td>
+<td>多（数百到上千）</td>
+<td>数千个张量核心</td>
+</tr>
+<tr>
+<td>优势</td>
+<td>通用性强</td>
+<td>并行张量计算，AI训练首选</td>
+<td>AI推理&#x2F;训练专用（谷歌云）</td>
+</tr>
+<tr>
+<td>代表厂商</td>
+<td>Intel, AMD</td>
+<td>NVIDIA（主流），AMD（部分）</td>
+<td>Google</td>
+</tr>
+<tr>
+<td>AI支持性</td>
+<td>差</td>
+<td><strong>非常好（主流DL框架支持）</strong></td>
+<td>仅支持 TensorFlow 等</td>
+</tr>
+</tbody></table>
+<h3 id="2-GPU分类"><a href="#2-GPU分类" class="headerlink" title="2. GPU分类"></a>2. GPU分类</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>说明</th>
+<th>代表型号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>消费级 GPU（游戏&#x2F;家用）</strong></td>
+<td>面向普通消费者，适合图形渲染、视频游戏和入门级AI任务</td>
+<td>NVIDIA RTX 3060 &#x2F; 3080 &#x2F; 4090，AMD RX 7900 XT</td>
+</tr>
+<tr>
+<td><strong>专业级 GPU（工作站&#x2F;创作者）</strong></td>
+<td>主要面向内容创作者和图形工作站，如3D渲染、视频剪辑等</td>
+<td>NVIDIA RTX A6000，Quadro 系列</td>
+</tr>
+<tr>
+<td><strong>数据中心&#x2F;服务器级 GPU（AI&#x2F;深度学习）</strong></td>
+<td>为AI训练、大模型推理、大数据处理设计，支持高带宽、显存大、支持NVLink</td>
+<td>NVIDIA A100、H100、L40、AMD Instinct MI300X</td>
+</tr>
+</tbody></table>
+<h3 id="3-GPU核心参数"><a href="#3-GPU核心参数" class="headerlink" title="3. GPU核心参数"></a>3. GPU核心参数</h3><h4 id="3-1-CUDA核心数量"><a href="#3-1-CUDA核心数量" class="headerlink" title="3.1 CUDA核心数量"></a><strong>3.1 CUDA核心数量</strong></h4><ul>
+<li><strong>定义</strong>：NVIDIA的CUDA核心（或AMD的流处理器）是并行计算的基本单元，数量越多，并行处理能力越强。</li>
+<li><strong>影响</strong>：直接影响浮点运算能力（如游戏帧率、AI训练速度）。例如，RTX 4090拥有16,384个CUDA核心，而RTX 4060仅3,072个。</li>
+</ul>
+<h4 id="3-2-Tensor核心数量"><a href="#3-2-Tensor核心数量" class="headerlink" title="**3.2 **Tensor核心数量"></a>**3.2 **Tensor核心数量</h4><ul>
+<li><strong>定义</strong>：Tensor Core 是 NVIDIA 自 <strong>Volta 架构</strong>起引入的专用硬件单元，用于加速 <strong>矩阵乘法与累加（MMA）</strong> 运算，特别适用于 AI 和深度学习任务</li>
+<li><strong>位置</strong>：它不是独立芯片，而是嵌入在 GPU 的 SM（流多处理器）中，与 CUDA Core、RT Core 共存。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>CUDA Core</th>
+<th>Tensor Core</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>用途</strong></td>
+<td>通用并行计算（图形、物理模拟等）</td>
+<td>专用矩阵运算（AI、深度学习）</td>
+</tr>
+<tr>
+<td><strong>操作粒度</strong></td>
+<td>标量&#x2F;向量运算</td>
+<td>4×4 矩阵乘法累加</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>每周期1次乘加</td>
+<td>每周期64次乘加（FP16）</td>
+</tr>
+<tr>
+<td><strong>适用精度</strong></td>
+<td>FP32、INT32</td>
+<td>FP16、INT8、TF32、FP8 等</td>
+</tr>
+</tbody></table>
+<h4 id="3-3-显存容量与类型"><a href="#3-3-显存容量与类型" class="headerlink" title="3.3 显存容量与类型"></a><strong>3.3 显存容量与类型</strong></h4><ul>
+<li><strong>容量</strong>：<ul>
+<li><strong>游戏</strong>：1080p需6-8GB，4K需12GB以上（如《赛博朋克2077》光追全高需16GB）。</li>
+<li><strong>AI&#x2F;深度学习</strong>：大模型（如LLaMA-7B）需24GB+（如RTX 4090 24GB）。</li>
+</ul>
+</li>
+<li><strong>类型</strong>：<ul>
+<li><strong>GDDR6X</strong>（如RTX 4080）：带宽高达716.8 GB&#x2F;s，适合高分辨率游戏。</li>
+<li><strong>HBM3</strong>（如NVIDIA H100）：带宽超3 TB&#x2F;s，用于数据中心，延迟更低。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-GPU配置方案"><a href="#4-GPU配置方案" class="headerlink" title="4. GPU配置方案"></a>4. GPU配置方案</h3><h4 id="4-1-大模型推理所需显存"><a href="#4-1-大模型推理所需显存" class="headerlink" title="4.1 大模型推理所需显存"></a>4.1 大模型推理所需显存</h4><table>
+<thead>
+<tr>
+<th>模型尺寸</th>
+<th>精度</th>
+<th>显存需求</th>
+<th>推荐显卡</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>7B</strong></td>
+<td>FP16</td>
+<td>12</td>
+<td>RTX 4080 &#x2F; RTX 4090</td>
+</tr>
+<tr>
+<td></td>
+<td>INT8</td>
+<td>8</td>
+<td>RTX 4080 &#x2F; T4</td>
+</tr>
+<tr>
+<td></td>
+<td>INT4</td>
+<td>6</td>
+<td>RTX 4080 &#x2F; RTX 3060</td>
+</tr>
+<tr>
+<td></td>
+<td>INT2</td>
+<td>4</td>
+<td>RTX 3060 &#x2F; RTX 4080</td>
+</tr>
+<tr>
+<td><strong>13B</strong></td>
+<td>FP16</td>
+<td>24</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td></td>
+<td>INT8</td>
+<td>16</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td></td>
+<td>INT4</td>
+<td>12</td>
+<td>RTX 4090 &#x2F; RTX 4080</td>
+</tr>
+<tr>
+<td></td>
+<td>INT2</td>
+<td>8</td>
+<td>RTX 4080 &#x2F; RTX 4090</td>
+</tr>
+<tr>
+<td><strong>30B</strong></td>
+<td>FP16</td>
+<td>60</td>
+<td>A100 (40GB) × 2</td>
+</tr>
+<tr>
+<td></td>
+<td>INT8</td>
+<td>40</td>
+<td>L40 (48GB)</td>
+</tr>
+<tr>
+<td></td>
+<td>INT4</td>
+<td>24</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td></td>
+<td>INT2</td>
+<td>16</td>
+<td>T4 (16GB)</td>
+</tr>
+<tr>
+<td><strong>70B</strong></td>
+<td>FP16</td>
+<td>120</td>
+<td>A100 (80GB) × 2</td>
+</tr>
+<tr>
+<td></td>
+<td>INT8</td>
+<td>80</td>
+<td>L40 (48GB) × 2</td>
+</tr>
+<tr>
+<td></td>
+<td>INT4</td>
+<td>48</td>
+<td>L40 (48GB)</td>
+</tr>
+<tr>
+<td></td>
+<td>INT2</td>
+<td>32</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td><strong>110B</strong></td>
+<td>FP16</td>
+<td>200</td>
+<td>H100 (80GB) × 3</td>
+</tr>
+<tr>
+<td></td>
+<td>INT8</td>
+<td>140</td>
+<td>H100 (80GB) × 2</td>
+</tr>
+<tr>
+<td></td>
+<td>INT4</td>
+<td>72</td>
+<td>A10 (24GB) × 3</td>
+</tr>
+<tr>
+<td></td>
+<td>INT2</td>
+<td>48</td>
+<td>A10 (24GB) × 2</td>
+</tr>
+</tbody></table>
+<h4 id="4-2-大模型训练微调所需显存"><a href="#4-2-大模型训练微调所需显存" class="headerlink" title="4.2 大模型训练微调所需显存"></a>4.2 大模型训练微调所需显存</h4><p>大模型训练显存需求与硬件配置（AMP&#x2F;FP16）:</p>
+<table>
+<thead>
+<tr>
+<th>模型尺寸</th>
+<th>精度</th>
+<th>显存需求（GB）</th>
+<th>推荐硬件配置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7B</td>
+<td>AMP</td>
+<td>120</td>
+<td>A100 (40GB) × 3</td>
+</tr>
+<tr>
+<td>7B</td>
+<td>FP16</td>
+<td>60</td>
+<td>A100 (40GB) × 2</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>AMP</td>
+<td>240</td>
+<td>A100 (80GB) × 3</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>FP16</td>
+<td>120</td>
+<td>A100 (80GB) × 2</td>
+</tr>
+<tr>
+<td>30B</td>
+<td>AMP</td>
+<td>600</td>
+<td>H100 (80GB) × 8</td>
+</tr>
+<tr>
+<td>30B</td>
+<td>FP16</td>
+<td>300</td>
+<td>H100 (80GB) × 4</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>AMP</td>
+<td>1200</td>
+<td>H100 (80GB) × 16</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>FP16</td>
+<td>600</td>
+<td>H100 (80GB) × 8</td>
+</tr>
+<tr>
+<td>110B</td>
+<td>AMP</td>
+<td>2000</td>
+<td>H100 (80GB) × 25</td>
+</tr>
+<tr>
+<td>110B</td>
+<td>FP16</td>
+<td>900</td>
+<td>H100 (80GB) × 12</td>
+</tr>
+</tbody></table>
+<p>大模型微调显存需求与推荐配置（Freeze&#x2F;LoRA&#x2F;QLoRA）:</p>
+<table>
+<thead>
+<tr>
+<th>模型尺寸</th>
+<th>微调方式</th>
+<th>精度</th>
+<th>显存需求（GB）</th>
+<th>推荐硬件配置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7B</td>
+<td>Freeze</td>
+<td>FP16</td>
+<td>20</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td>7B</td>
+<td>LoRA</td>
+<td>FP16</td>
+<td>16</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td>7B</td>
+<td>QLoRA</td>
+<td>INT8</td>
+<td>10</td>
+<td>RTX 4080</td>
+</tr>
+<tr>
+<td>7B</td>
+<td>QLoRA</td>
+<td>INT4</td>
+<td>6</td>
+<td>RTX 3060</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>Freeze</td>
+<td>FP16</td>
+<td>40</td>
+<td>RTX 4090 &#x2F; A100 (40GB)</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>LoRA</td>
+<td>FP16</td>
+<td>32</td>
+<td>A100 (40GB)</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>QLoRA</td>
+<td>INT8</td>
+<td>20</td>
+<td>L40 (48GB)</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>QLoRA</td>
+<td>INT4</td>
+<td>12</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td>30B</td>
+<td>Freeze</td>
+<td>FP16</td>
+<td>80</td>
+<td>A100 (80GB)</td>
+</tr>
+<tr>
+<td>30B</td>
+<td>LoRA</td>
+<td>FP16</td>
+<td>64</td>
+<td>A100 (80GB)</td>
+</tr>
+<tr>
+<td>30B</td>
+<td>QLoRA</td>
+<td>INT8</td>
+<td>40</td>
+<td>L40 (48GB)</td>
+</tr>
+<tr>
+<td>30B</td>
+<td>QLoRA</td>
+<td>INT4</td>
+<td>24</td>
+<td>RTX 4090</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>Freeze</td>
+<td>FP16</td>
+<td>200</td>
+<td>H100 (80GB) × 3</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>LoRA</td>
+<td>FP16</td>
+<td>160</td>
+<td>H100 (80GB) × 2</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>QLoRA</td>
+<td>INT8</td>
+<td>80</td>
+<td>H100 (80GB)</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>QLoRA</td>
+<td>INT4</td>
+<td>48</td>
+<td>L40 (48GB)</td>
+</tr>
+<tr>
+<td>110B</td>
+<td>Freeze</td>
+<td>FP16</td>
+<td>360</td>
+<td>H100 (80GB) × 5</td>
+</tr>
+<tr>
+<td>110B</td>
+<td>LoRA</td>
+<td>FP16</td>
+<td>240</td>
+<td>H100 (80GB) × 3</td>
+</tr>
+<tr>
+<td>110B</td>
+<td>QLoRA</td>
+<td>INT8</td>
+<td>140</td>
+<td>H100 (80GB) × 2</td>
+</tr>
+<tr>
+<td>110B</td>
+<td>QLoRA</td>
+<td>INT4</td>
+<td>72</td>
+<td>A10 (24GB) × 3</td>
+</tr>
+</tbody></table>
+<h2 id="四-模型压缩"><a href="#四-模型压缩" class="headerlink" title="四. 模型压缩"></a>四. 模型压缩</h2><h3 id="1-模型量化"><a href="#1-模型量化" class="headerlink" title="1. 模型量化"></a>1. 模型量化</h3><h4 id="1-1-什么是模型量化"><a href="#1-1-什么是模型量化" class="headerlink" title="1.1 什么是模型量化"></a>1.1 什么是模型量化</h4><p><strong>模型量化（Model Quantization）<strong>是一种</strong>降低深度学习模型存储和计算开销</strong>的技术，通过将模型参数（权重）和激活值从高精度（如32位浮点数FP32）转换为低精度（如8位整数INT8），实现模型压缩和推理加速，同时尽量保持模型精度。</p>
+<h4 id="1-2-为什么需要量化"><a href="#1-2-为什么需要量化" class="headerlink" title="1.2 为什么需要量化"></a>1.2 为什么需要量化</h4><ul>
+<li><strong>存储压缩</strong>：FP32模型通常占几百MB到几GB，而INT8模型可缩小至原来的1&#x2F;4。</li>
+<li><strong>计算加速</strong>：整数运算（如INT8）比浮点运算（FP32）更快，尤其在专用硬件（如TPU、NPU）上。</li>
+<li><strong>能耗降低</strong>：低精度计算减少内存访问和功耗，适合边缘设备（手机、IoT设备）。</li>
+</ul>
+<h4 id="1-3-量化原理"><a href="#1-3-量化原理" class="headerlink" title="1.3 量化原理"></a>1.3 量化原理</h4><p>将连续的高精度数值映射到离散的低精度数值，分为<strong>线性量化</strong>（最常用）和<strong>非线性量化</strong>（如对数量化）。</p>
+<p><img src="/images/image-20250721211913154.png" alt="image-20250721211913154"></p>
+<h4 id="1-4-量化工具与框架"><a href="#1-4-量化工具与框架" class="headerlink" title="1.4 量化工具与框架"></a>1.4 量化工具与框架</h4><ul>
+<li><strong>TensorRT</strong>（NVIDIA）：支持INT8&#x2F;FP16量化，需校准数据集。</li>
+<li><strong>TensorFlow Lite</strong>：提供PTQ和QAT工具。</li>
+<li><strong>PyTorch</strong>：<code>torch.quantization</code>模块支持动态&#x2F;静态量化。</li>
+<li><strong>ONNX Runtime</strong>：跨平台量化工具。</li>
+</ul>
+<p>示例代码:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.quantization <span class="keyword">import</span> quantize_static</span><br><span class="line"></span><br><span class="line"><span class="comment"># 准备模型和校准数据</span></span><br><span class="line">model = MyModel().<span class="built_in">eval</span>()</span><br><span class="line">calibration_loader = get_calibration_data()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 静态量化</span></span><br><span class="line">quantized_model = quantize_static(</span><br><span class="line">    model, </span><br><span class="line">    qconfig_spec=torch.quantization.get_default_qconfig(<span class="string">&#x27;fbgemm&#x27;</span>), </span><br><span class="line">    dtype=torch.qint8</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-5-量化挑战"><a href="#1-5-量化挑战" class="headerlink" title="1.5 量化挑战"></a>1.5 量化挑战</h4><ul>
+<li><strong>精度损失</strong>：低比特（如INT4）可能导致显著下降，需通过混合精度（部分层保持FP16）或QAT缓解。</li>
+<li><strong>硬件支持</strong>：无INT8加速的CPU&#x2F;GPU可能反而变慢。</li>
+<li><strong>特殊结构</strong>：LayerNorm、Softmax等非线性层量化难度高。</li>
+</ul>
+<h3 id="2-模型蒸馏"><a href="#2-模型蒸馏" class="headerlink" title="2. 模型蒸馏"></a>2. 模型蒸馏</h3><h4 id="2-1-什么是模型蒸馏"><a href="#2-1-什么是模型蒸馏" class="headerlink" title="2.1 什么是模型蒸馏"></a>2.1 什么是模型蒸馏</h4><p>模型蒸馏（Knowledge Distillation，简称KD）是一种**“教师-学生”式的模型压缩与知识迁移技术**，通过让一个小模型（学生网络）去模仿一个大模型或模型集成（教师网络）的输出或中间特征，从而在<strong>显著降低计算量和参数量</strong>的同时，<strong>尽可能保留教师网络的精度</strong>，现已成为模型压缩、迁移学习和增量学习的重要工具。</p>
+<h4 id="2-2-核心思想"><a href="#2-2-核心思想" class="headerlink" title="2.2 核心思想"></a>2.2 核心思想</h4><p>蒸馏的核心是**“知识迁移”而非“结构复制”<strong>，通过软化输出、匹配特征或关系，让小模型获得大模型的泛化能力。它尤其适合</strong>大模型压缩**（如BERT→TinyBERT）和<strong>跨架构迁移</strong>（如CNN→Transformer)。</p>
+<ul>
+<li><strong>教师网络（Teacher）</strong>：通常是一个<strong>高性能、大体积</strong>的模型（如BERT-Large、ResNet-152），或集成模型。</li>
+<li><strong>学生网络（Student）</strong>：一个<strong>轻量级</strong>的小模型（如TinyBERT、MobileNet），学习教师的“知识”。</li>
+<li><strong>知识类型</strong>：<ul>
+<li><strong>Logits蒸馏</strong>（最早）：学生模仿教师的<strong>softmax输出分布</strong>（即“暗知识”）。</li>
+<li><strong>特征蒸馏</strong>：学生模仿教师的<strong>中间层特征</strong>（如注意力矩阵、隐藏状态）。</li>
+<li><strong>关系蒸馏</strong>：学生模仿教师不同样本间的关系（如特征相似度）。</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>方法类型</strong></th>
+<th><strong>是否需预训练教师</strong></th>
+<th><strong>适用任务</strong></th>
+<th><strong>工业界使用频率</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Logits蒸馏</strong></td>
+<td>✅ 是</td>
+<td>分类、NLP、CV</td>
+<td><strong>⭐⭐⭐⭐极高</strong></td>
+</tr>
+<tr>
+<td><strong>特征蒸馏</strong></td>
+<td>✅ 是</td>
+<td>跨架构、跨模态</td>
+<td><strong>⭐⭐⭐高</strong></td>
+</tr>
+<tr>
+<td><strong>自&#x2F;在线蒸馏</strong></td>
+<td>❌ 否</td>
+<td>轻量模型、边缘设备</td>
+<td><strong>⭐⭐中</strong></td>
+</tr>
+</tbody></table>
+<h4 id="2-3-蒸馏原理"><a href="#2-3-蒸馏原理" class="headerlink" title="2.3 蒸馏原理"></a>2.3 蒸馏原理</h4><p><img src="/images/image-20250721214041097.png" alt="image-20250721214041097"></p>
+<h4 id="2-4-蒸馏工具与框架"><a href="#2-4-蒸馏工具与框架" class="headerlink" title="2.4 蒸馏工具与框架"></a>2.4 蒸馏工具与框架</h4><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>典型用途</th>
+<th>技术特色</th>
+<th>获取方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>TextBrewer</strong></td>
+<td>BERT 系列 → TinyBERT、DistilBERT 等</td>
+<td>• 模型无关（Transformer 友好）<br>• 非侵入式，不改模型结构<br>• 支持软&#x2F;硬标签、特征层、多教师、动态温度</td>
+<td>pip install textbrewer<br>官网：textbrewer.hfl-rc.com</td>
+</tr>
+<tr>
+<td><strong>PAI-Model Gallery</strong></td>
+<td>通义千问、Llama2、ChatGLM 蒸馏</td>
+<td>• 零代码拖拽式蒸馏<br>• 集成数据增强、量化、评估</td>
+<td>阿里云 PAI 控制台</td>
+</tr>
+<tr>
+<td><strong>DistilQwen2 脚本</strong></td>
+<td>Qwen-32B → 0.5&#x2F;1.5&#x2F;3&#x2F;7B</td>
+<td>• 官方脚本 + 评估 + 部署一条龙</td>
+<td>GitHub：QwenLM&#x2F;DistilQwen2</td>
+</tr>
+<tr>
+<td><strong>Distiller</strong>（Intel）</td>
+<td>通用压缩（蒸馏+剪枝+量化）</td>
+<td>• PyTorch 原生实现<br>• 可插拔损失函数、调度器<br>• 官方教程丰富</td>
+<td>GitHub：intel&#x2F;distiller</td>
+</tr>
+<tr>
+<td><strong>KD-Lib</strong></td>
+<td>快速实验对比各种 KD 算法</td>
+<td>• 15+ 经典算法一键调用<br>• 支持 CV &#x2F; NLP 通用</td>
+<td>pip install kd-lib</td>
+</tr>
+</tbody></table>
+<p>示例代码 :</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F  <span class="comment"># 导入 PyTorch 的函数式接口，用于各种损失计算</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">distillation_loss</span>(<span class="params">student_logits, teacher_logits, T=<span class="number">4.0</span>, alpha=<span class="number">0.5</span></span>):</span><br><span class="line">    <span class="comment"># 计算教师模型的软标签（soft targets），使用温度 T 进行缩放</span></span><br><span class="line">    soft_targets = F.softmax(teacher_logits / T, dim=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算学生模型的 soft log-probabilities，同样使用温度 T 进行缩放</span></span><br><span class="line">    student_soft = F.log_softmax(student_logits / T, dim=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算 KL 散度作为蒸馏损失，并乘以 T^2 以平衡梯度尺度</span></span><br><span class="line">    distill_loss = F.kl_div(student_soft, soft_targets, reduction=<span class="string">&#x27;batchmean&#x27;</span>) * (T ** <span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算学生模型与真实标签之间的交叉熵损失（硬标签损失）</span></span><br><span class="line">    hard_loss = F.cross_entropy(student_logits, labels)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 返回加权组合的总损失：alpha 控制硬损失的权重，(1-alpha) 控制蒸馏损失的权重</span></span><br><span class="line">    <span class="keyword">return</span> alpha * hard_loss + (<span class="number">1</span> - alpha) * distill_loss</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-模型剪枝"><a href="#3-模型剪枝" class="headerlink" title="3. 模型剪枝"></a>3. 模型剪枝</h3><h4 id="3-1-什么是模型剪枝"><a href="#3-1-什么是模型剪枝" class="headerlink" title="3.1 什么是模型剪枝"></a>3.1 什么是模型剪枝</h4><p><strong>模型剪枝（Model Pruning）<strong>是一种</strong>在几乎不损失精度的情况下，删除神经网络中冗余参数或结构</strong>的模型压缩技术。</p>
+<h4 id="3-2-核心思想"><a href="#3-2-核心思想" class="headerlink" title="3.2 核心思想"></a>3.2 核心思想</h4><p>核心思想是：<strong>“剪掉”对输出结果影响极小的权重、神经元、通道甚至整层</strong>，从而减小模型体积、降低计算量和能耗，提高推理速度。</p>
+<h4 id="3-3-剪枝流程"><a href="#3-3-剪枝流程" class="headerlink" title="3.3 剪枝流程"></a>3.3 剪枝流程</h4><h5 id="步骤-1：评估重要性"><a href="#步骤-1：评估重要性" class="headerlink" title="步骤 1：评估重要性"></a><strong>步骤 1：评估重要性</strong></h5><ul>
+<li><strong>基于幅值</strong>（Magnitude）：删除 L1-norm 最小的通道。</li>
+<li><strong>基于梯度</strong>（Grad-based）：梯度小的权重影响小。</li>
+<li><strong>基于 BN 缩放因子</strong>（Network Slimming）：BN 的 γ 越小，通道越不重要。</li>
+</ul>
+<h5 id="步骤-2：剪枝-微调"><a href="#步骤-2：剪枝-微调" class="headerlink" title="步骤 2：剪枝 + 微调"></a><strong>步骤 2：剪枝 + 微调</strong></h5><ol>
+<li><strong>剪枝</strong>：根据重要性阈值删除通道。</li>
+<li><strong>微调</strong>：用原数据再训练几轮恢复精度。</li>
+</ol>
+<h3 id="4-三种压缩技术的对比"><a href="#4-三种压缩技术的对比" class="headerlink" title="4. 三种压缩技术的对比"></a>4. 三种压缩技术的对比</h3><table>
+<thead>
+<tr>
+<th><strong>技术</strong></th>
+<th><strong>原理</strong></th>
+<th><strong>优点</strong></th>
+<th><strong>缺点</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>蒸馏</strong></td>
+<td>教师指导学生学习</td>
+<td>精度损失小，可跨架构</td>
+<td>需要训练教师模型</td>
+</tr>
+<tr>
+<td><strong>量化</strong></td>
+<td>降低数值精度（如FP32→INT8）</td>
+<td>压缩比高，硬件加速</td>
+<td>极低比特时精度下降</td>
+</tr>
+<tr>
+<td><strong>剪枝</strong></td>
+<td>删除冗余参数&#x2F;通道</td>
+<td>直接减少计算量</td>
+<td>稀疏性需硬件支持</td>
+</tr>
+</tbody></table>
+<p><strong>联合使用</strong>：先蒸馏，再量化&#x2F;剪枝。或者先剪枝 → 再量化 → 再蒸馏。</p>
+<h2 id="五-模型部署"><a href="#五-模型部署" class="headerlink" title="五. 模型部署"></a>五. 模型部署</h2><h3 id="1-传统部署方式"><a href="#1-传统部署方式" class="headerlink" title="1. 传统部署方式:"></a>1. 传统部署方式:</h3><h4 id="1-1-模型保存（Export）"><a href="#1-1-模型保存（Export）" class="headerlink" title="1.1 模型保存（Export）"></a>1.1 模型保存（Export）</h4><ul>
+<li>保存为 <code>.pt</code>（PyTorch）、<code>.pb</code>（TensorFlow）、<code>.pkl</code>（Scikit-Learn）等格式</li>
+<li>或转换为标准格式：ONNX、TorchScript 等</li>
+</ul>
+<h4 id="1-2-服务封装（Serve）"><a href="#1-2-服务封装（Serve）" class="headerlink" title="1.2 服务封装（Serve）"></a>1.2 服务封装（Serve）</h4><ul>
+<li>将模型包装成一个服务（API接口或命令行接口）</li>
+<li>通常使用 Python + Flask&#x2F;FastAPI + 推理逻辑</li>
+</ul>
+<h4 id="1-3-接口暴露（API）"><a href="#1-3-接口暴露（API）" class="headerlink" title="1.3 接口暴露（API）"></a>1.3 接口暴露（API）</h4><ul>
+<li>将模型服务发布为 HTTP 接口，让前端、客户端或其他服务可以访问</li>
+</ul>
+<h3 id="2-Ollama"><a href="#2-Ollama" class="headerlink" title="2. Ollama"></a>2. Ollama</h3><p>ollama官网: <a target="_blank" rel="noopener" href="https://ollama.com/">Ollama</a></p>
+<h4 id="2-1-核心特点"><a href="#2-1-核心特点" class="headerlink" title="2.1 核心特点:"></a>2.1 核心特点:</h4><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>使用简单</td>
+<td>只需 <code>ollama run llama2</code> 即可运行模型</td>
+</tr>
+<tr>
+<td>多平台支持</td>
+<td>支持 macOS、Linux、Windows（WSL）</td>
+</tr>
+<tr>
+<td>自动下载模型</td>
+<td>自动拉取模型权重并管理</td>
+</tr>
+<tr>
+<td>支持自定义模型</td>
+<td>可通过 <code>Modelfile</code> 自定义模型结构和指令风格</td>
+</tr>
+<tr>
+<td>本地 API 接口</td>
+<td>提供 OpenAI 类似的 API 接口用于本地开发</td>
+</tr>
+<tr>
+<td>不支持多卡并行</td>
+<td>更适合单卡、消费级显卡使用</td>
+</tr>
+<tr>
+<td>性能一般</td>
+<td>推理速度和 vLLM&#x2F;LMDeploy 相比略逊一筹</td>
+</tr>
+</tbody></table>
+<h4 id="2-2-常用命令"><a href="#2-2-常用命令" class="headerlink" title="2.2 常用命令:"></a>2.2 常用命令:</h4><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>拉取并直接聊天</td>
+<td><code>ollama run llama3:8b</code></td>
+</tr>
+<tr>
+<td>拉取不聊天</td>
+<td><code>ollama pull mistral:7b-instruct-q4_0</code></td>
+</tr>
+<tr>
+<td>查看本地模型</td>
+<td><code>ollama list</code></td>
+</tr>
+<tr>
+<td>删除模型</td>
+<td><code>ollama rm llama2</code></td>
+</tr>
+<tr>
+<td>复制模型</td>
+<td><code>ollama cp llama3 my-llama3</code></td>
+</tr>
+<tr>
+<td>启动服务（后台）</td>
+<td><code>ollama serve</code></td>
+</tr>
+<tr>
+<td>查看日志</td>
+<td><code>journalctl -u ollama -f</code></td>
+</tr>
+</tbody></table>
+<h3 id="3-VLLm"><a href="#3-VLLm" class="headerlink" title="3. VLLm"></a>3. VLLm</h3><p>官网: <a target="_blank" rel="noopener" href="https://docs.vllm.ai/en/latest/">https://docs.vllm.ai/en/latest/</a></p>
+<p>核心特点:</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>高并发推理能力</td>
+<td>支持 Tensor Parallel，多用户同时访问</td>
+</tr>
+<tr>
+<td>支持 OpenAI 接口</td>
+<td>可无缝替换 ChatGPT API</td>
+</tr>
+<tr>
+<td>支持 FlashAttention</td>
+<td>推理更快，显存占用更小</td>
+</tr>
+<tr>
+<td>动态批处理</td>
+<td>自动合并多个请求，提升吞吐量</td>
+</tr>
+<tr>
+<td>支持 CUDA Graphs</td>
+<td>减少 Kernel Launch Overhead</td>
+</tr>
+<tr>
+<td>社区活跃</td>
+<td>很多大模型厂商（如 MosaicML）都支持</td>
+</tr>
+<tr>
+<td>不适合轻量部署</td>
+<td>一般需 A100&#x2F;4090 等较强显卡</td>
+</tr>
+</tbody></table>
+<h3 id="4-LMDeploy"><a href="#4-LMDeploy" class="headerlink" title="4. LMDeploy"></a>4. LMDeploy</h3><p>教程: <a target="_blank" rel="noopener" href="https://lmdeploy.readthedocs.io/zh-cn/stable/">https://lmdeploy.readthedocs.io/zh-cn/stable/</a></p>
+<p>核心特点:</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>支持 INT4&#x2F;INT8 量化</td>
+<td>显著降低显存占用</td>
+</tr>
+<tr>
+<td>多后端支持</td>
+<td>TensorRT &#x2F; ONNX Runtime &#x2F; PPLNN</td>
+</tr>
+<tr>
+<td>和 HuggingFace、Transformers 高兼容</td>
+<td></td>
+</tr>
+<tr>
+<td>支持 C++ &#x2F; Python 接口</td>
+<td>易嵌入现有系统</td>
+</tr>
+<tr>
+<td>适合国产模型（如 Qwen、Baichuan）</td>
+<td></td>
+</tr>
+<tr>
+<td>配置复杂</td>
+<td>不如 Ollama&#x2F;vLLM 开箱即用</td>
+</tr>
+</tbody></table>
+<h3 id="5-各种方式的对比"><a href="#5-各种方式的对比" class="headerlink" title="5. 各种方式的对比"></a>5. 各种方式的对比</h3><table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>传统方式</th>
+<th>Ollama</th>
+<th>vLLM</th>
+<th>LMDeploy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编码需求</td>
+<td>高</td>
+<td>极低</td>
+<td>低</td>
+<td>中</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>强（可控）</td>
+<td>弱</td>
+<td>中</td>
+<td>强</td>
+</tr>
+<tr>
+<td>推理效率</td>
+<td>一般</td>
+<td>一般</td>
+<td><strong>极高</strong></td>
+<td><strong>高</strong>（适配工业部署）</td>
+</tr>
+<tr>
+<td>使用门槛</td>
+<td>高</td>
+<td>极低</td>
+<td>低</td>
+<td>中</td>
+</tr>
+<tr>
+<td>适合场景</td>
+<td>教学&#x2F;自定义逻辑</td>
+<td>本地玩模型</td>
+<td>打造聊天服务&#x2F;API服务</td>
+<td>工业级推理服务&#x2F;量产部署</td>
+</tr>
+</tbody></table>
+
+        </article>
+        <section class="post-near">
+            <ul>
+                
+                    <li>上一篇: 看完啦 (つд⊂)</li>
+                
+                
+                    <li>下一篇: <a href="/2025/07/21/leetcode-Day3/">leetcode-Day3</a></li>
+                
+            </ul>
+        </section>
+        
+            <section class="post-tags">
+            <a class="-none-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a>
+            </section>
+        
+    
+        <section class="post-author">
+        
+            <figure class="author-avatar">
+                <img src="https://sdn.geekzu.org/avatar/d22eb460ecab37fcd7205e6a3c55c228?s=200&r=X&d=" alt="hduer" />
+            </figure>
+        
+            <div class="author-info">
+                <h4>hduer</h4>
+                <p>一个热爱生活的hduer</p>
+            </div>
+        </section>
+    
+    </div>
+</main>
+
+    <footer>
+    <div class="buttons">
+        <button class="to-top" href="#"></button>
+    </div>
+    <div class="wrap min">
+        <section class="widget">
+            <div class="row">
+                <div class="col-m-4">
+                    <h3 class="title-recent">最新文章：</h3>
+                    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2025/07/21/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83%E5%8E%8B%E7%BC%A9%E4%B8%8E%E9%83%A8%E7%BD%B2/">大模型微调压缩与部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/21/leetcode-Day3/">leetcode-Day3</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/20/leetcode-Day2/">leetcode-Day2</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/19/leetcode-Day1/">leetcode-Day1</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/11/RAG%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%AE%B9%E5%99%A8%E5%8C%96%E5%AE%9E%E8%B7%B5/">RAG智能问答系统容器化实践</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/07/08/transformer/">Transformer学习笔记</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-date">时光机：</h3>
+                    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li></ul>
+                </div>
+                <div class="col-m-4">
+                    <h3 class="title-tags">标签云：</h3>
+                    <a href="/tags/Dify/" style="font-size: 10px;">Dify</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/docker/" style="font-size: 20px;">docker</a> <a href="/tags/prompt/" style="font-size: 10px;">prompt</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">大模型</a> <a href="/tags/%E5%BA%95%E5%B1%82%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">底层架构</a>
+                </div>
+            </div>
+        </section>
+        <section class="sub-footer">
+            <p>© 2025 <a href="/">Hduer</a>. All Rights Reserved. Theme By <a href="https://github.com/Dreamer-Paul/Hingle" target="_blank" rel="nofollow">Hingle</a>.</p>
+        </section>
+    </div>
+</footer>
+
+
+<script src="/static/kico.js"></script>
+<script src="/static/hingle.js"></script>
+
+
+<script>var hingle = new Paul_Hingle({"copyright":true,"night":true});</script>
+
+  </body>
+</html>
